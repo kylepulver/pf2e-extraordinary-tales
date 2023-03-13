@@ -1,0 +1,29 @@
+<form>
+
+<div style="font-size:80%;text-align:center">
+    Some options may require a refresh to take effect.
+</div>
+{{#each config.hideSections}}
+<div class="form-group">
+    <div style="flex: 0 0 2em">
+    <input type="checkbox" name="hideSections.{{@key}}" {{checked (lookup ../config.hideSections @key)}}> 
+    </div>
+    <label for="hideSections.{{@key}}">Hide Section {{@key}}</label>
+</div>
+{{/each}}
+
+{{#each config.chat}}
+<div class="form-group">
+    <div style="flex: 0 0 2em">
+    <input type="checkbox" name="chat.{{@key}}" {{checked (lookup ../config.chat @key)}}> 
+    </div>
+    <label for="chat.{{@key}}">Chat {{@key}}</label>
+</div>
+{{/each}}
+
+<div class="form-group buttons">
+    <button type="submit"><i class="fa-solid fa-check"></i> Save</button>
+    <button type="reset"><i class="fa-solid fa-times"></i> Cancel</button>
+</div>
+
+</form>

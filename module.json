@@ -1,0 +1,39 @@
+{
+  "title": "Extraordinary Tales",
+  "description": "Additional rules for Pathfinder 2e.",
+  "version": "1",
+  "authors": [
+    {
+      "name": "Kyle Pulver",
+      "discord": "kpulv#9999"
+    }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "esmodules": [
+    "src/module.js",
+    "src/settings.js"
+  ],
+  "styles": [
+    "css/style.css"
+  ],
+  "url": "https://github.com/",
+  "download": "https://github.com/ ",
+  "manifest": "https://github.com/ ",
+  "bugs": "https://github.com/",
+  "socket": true,
+  "allowBugReporter": true,
+  "id": "pf2e-extraordinary-tales",
+  "compatibility": {
+    "minimum": "10",
+    "verified": "10"
+  },
+  "name": "pf2e-extraordinary-tales",
+  "minimumCoreVersion": "10",
+  "compatibleCoreVersion": "10"
+}

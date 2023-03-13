@@ -1,0 +1,65 @@
+<form>
+
+{{#each self}}
+<h2>{{this.name}}</h2>
+<div data-actor-id="{{this.id}}">
+<div class="form-group">
+
+<div style="text-align:center">Personal</div>
+<div style="flex: 0 0 4em" data-action="edit" data-xp="personalxp">{{lookup ../personaluse this.id}} ({{lookup ../personalxp this.id}})</div>
+<button type="button" style="flex: 0 0 3em" data-action="use" data-xp="personalxp"><i class="fa-solid fa-play"></i></button>
+<button type="button" style="flex: 0 0 2em" data-action="increase" data-xp="personalxp"><i class="fa-solid fa-plus"></i></button>
+<button type="button" style="flex: 0 0 2em" data-action="decrease" data-xp="personalxp"><i class="fa-solid fa-minus"></i></button>
+
+<div style="text-align:center">Collateral</div>
+
+<div style="flex: 0 0 4em"  data-action="edit" data-xp="collateralxp">{{lookup ../collateraluse this.id}} ({{lookup ../collateralxp this.id}})</div>
+
+<button type="button" style="flex: 0 0 3em" data-action="use" data-xp="collateralxp"><i class="fa-solid fa-play"></i></button>
+<button type="button" style="flex: 0 0 2em" data-action="increase" data-xp="collateralxp"><i class="fa-solid fa-plus"></i></button>
+<button type="button" style="flex: 0 0 2em" data-action="decrease" data-xp="collateralxp"><i class="fa-solid fa-minus"></i></button>
+
+<div style="text-align:center">Hero Points</div>
+<div style="flex: 0 0 3em">{{lookup ../heropoints this.id}} / 3</div>
+<button type="button" style="flex: 0 0 2em" data-action="heropointincrease"><i class="fa-solid fa-plus"></i></button>
+<button type="button" style="flex: 0 0 2em" data-action="heropointdecrease"><i class="fa-solid fa-minus"></i></button>
+</div>
+
+</div>
+{{/each}}
+
+<div  style="display:flex;align-items:center;text-align:center">
+    <div style="flex: 0 0 30%"></div>
+    <div  style="flex: 3">Personal XP</div>
+    <div  style="flex: 3">Uses</div>
+    <div  style="flex: 3">Collateral XP</div>
+    <div  style="flex: 3">Uses</div>
+    <div  style="flex: 3">Hero Points</div>
+</div>
+
+
+{{#each characters}}
+<div  style="display:flex;align-items:center;text-align:center;padding: 0.25em 0">
+<div style="flex: 0 0 30%">
+    {{this.name}}
+    </div>
+<div style="flex: 3">
+    {{lookup ../personalxp this.id}}
+</div>
+<div style="flex: 3">
+    {{lookup ../personaluse this.id}}
+</div>
+<div style="flex: 3">
+    {{lookup ../collateralxp this.id}}
+</div>
+<div style="flex: 3">
+    {{lookup ../collateraluse this.id}}
+</div>
+<div style="flex: 3">
+    {{lookup ../heropoints this.id}}
+</div>
+</div>
+{{/each}}
+
+
+</form>

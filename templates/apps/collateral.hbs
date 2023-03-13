@@ -1,0 +1,19 @@
+<form>
+{{#each characters}}
+<div class="form-group">
+    <div>{{this.name}}</div>
+    {{#if (lookup ../collateralready this.id)}}
+    <div style="font-weight:bold">READY!</div>
+    {{else}}
+    <div style="opacity:0.75">Waiting...</div>
+    {{/if}}
+</div>
+{{/each}}
+
+<div style="padding:0.25em;font-size:120%">
+    This window will close once all characters have opted into using Collateral XP. You can close this window to opt out.
+</div>
+
+
+
+</form>

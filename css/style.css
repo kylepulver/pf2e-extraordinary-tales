@@ -1,0 +1,353 @@
+.pf2e-extraordinary-tales .test {
+    color: red;
+}
+
+.placeable-hud .control-icon,
+#token-hud .attribute.elevation {
+    margin: 0 !important;
+}
+#token-hud .attribute.elevation {
+    width: 40px !important;
+    flex-basis: auto !important;
+}
+.placeable-hud .control-icon,
+.placeable-hud input[type="text"] {
+    border: 0 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    border-radius: 0 !important;
+    height: auto !important;
+    line-height: 1 !important;
+    flex: 0 0 auto !important;
+    padding: 2px 0 !important;
+}
+#token-hud .col.right {
+    right: -60px !important;
+}
+#token-hud .col.left {
+    left: -60px !important;
+}
+.placeable-hud input[type="text"] {
+    font-size: var(--font-size-20) !important;
+}
+.chat-message > .message-content .message-buttons {
+    margin: 0 !important;
+    gap: 0 !important;
+}
+
+.pf2e-extraordinary-tales .alt-row:nth-child(even) {
+    background: #0001;
+}
+
+.pf2e-extraordinary-tales .alt-text:nth-child(even) {
+    /* opacity:0.75; */
+}
+
+div.hover-gold > div:hover,span.hover-gold:hover {
+    color: #fd0 !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+}
+.chat-message .message-content .damage-application button {
+    height: auto !important;
+}
+
+#tooltip {
+    padding: 0.5em !important;
+    border-radius: 0 !important;
+    outline: 0.25em solid #000a;
+    transition: none !important;
+    font-size: 1em !important;
+    line-height: 1 !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    background: #000 !important;
+    box-shadow: none !important;
+    min-height: 0.5em !important;
+}
+.dorako-ui a, .dorako-ui button {
+    transition: 0 !important;
+}
+.dorako-ui.message.chat-message .persistent-damage-recovery button {
+    margin-top: 0 !important;
+}
+.dorako-ui.message .message-content .damage-application {
+    gap: 0 !important;
+}
+.chat-message .message-content .damage-roll:not(:first-child) {
+    margin-top: 0 !important;
+}
+.chat-message .message-content .damage-application {
+    margin-top: 0 !important;
+}
+.dice-roll .dice-formula {
+    margin-bottom: 0 !important;
+}
+.dice-roll .dice-formula, .dice-roll .dice-total {
+    line-height: 1 !important;
+    background: #0001 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+.tooltipster-default {
+    border-radius: 0  !important;
+    border: 0  !important;
+    background: #000c  !important;
+    color: #ddd  !important;
+    
+}
+.tooltipster-default .tooltipster-content,
+.tooltipster-content {
+    background: #000c !important;
+    font-size: 90% !important;
+    letter-spacing: -0.025em !important;
+}
+.effect-panel.dorako-ui {
+
+    overflow:hidden !important;
+}
+.dorako-ui a, .dorako-ui button,
+.dorako-ui.message .message-content .damage-application button {
+    transition: none !important;
+}
+.dorako-ui.message.chat-message {
+    margin: 2px 0 0 0!important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+.dorako-ui .message-header.light-header-text .header-meta {
+    background: 0 !important;
+    border: 0 !important;
+}
+.roll-note p {
+    margin: 0 !important;
+}
+.message-content ul {
+    margin: 0 !important;
+}
+.dorako-ui.message.chat-message .message-content .pf2e.chat-card .card-content {
+    border: 0 !important;
+    padding: 0 !important;
+    font-weight: normal !important;
+    max-height: 300px  !important;
+    overflow-y: auto  !important;
+    overflow-x:hidden !important;
+    scrollbar-width: thin !important;
+    /* scrollbar-color: initial transparent !important; */
+    
+}
+.dorako-ui.message.chat-message .message-content .pf2e.chat-card .tags {
+    margin: 0 !important;
+}
+.dorako-ui.message.chat-message .message-content .pf2e.chat-card .card-header img {
+    margin: 0 !important;
+    margin-right: 1px !important;
+    box-shadow: none !important;
+
+}
+.dorako-ui.message.chat-message .message-content .pf2e.chat-card .card-header h3.pf2-icon {
+    font-size: 1.75rem !important;
+    flex: 0 0 1.5rem !important;  
+    text-align: right;
+    font-family: "Pathfinder2eActions" !important;
+}
+.pf2e.chat-card .card-header {
+    padding: 0 !important;
+}
+.dorako-ui.message.chat-message .message-content .pf2e.chat-card .card-header h3 {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    line-height: 0.95 !important;
+    letter-spacing: -0.025em !important;
+    font-size: 80%;
+    font-variant: small-caps;
+    font-weight: 600;
+    font-family: var(--sans-serif) !important;
+}
+#chat-log {
+    scrollbar-width: thin !important;
+}
+p.compact-text, section.roll-note {
+    margin: 0 !important;
+    line-height: 1.1 !important;
+}
+.app.sheet.actor p, .pf2e p {
+    font-weight: normal !important;
+    font-size: 95% !important;
+}
+table.pf2-table td, table.pf2-table th {
+    padding: 0 !important;
+}
+
+.message-content .dice-roll .statuseffect-rules {
+    transition: none !important;
+}
+/* a.content-link, a.inline-roll {
+    background: #0001;
+    padding: 0 2px;
+    border: 0;
+    outline: 0.25em solid #0084;
+    border-radius: 0;
+} */
+a.content-link, a.inline-roll,
+span[data-pf2-effect-area],
+span[data-pf2-check],
+span[data-pf2-action] {
+    background: #fffc !important;
+    padding: 0 2px !important;
+    border: 0 !important;
+    outline: 0 !important;
+    /* outline: 0.25em solid #0084; */
+    color: #000 !important;
+    border-radius: 0 !important;
+}
+i[data-pf2-repost] {
+    /* background: #0001; */
+    color: #0004;
+    outline: 0;
+    border: 0;
+    margin: 0;
+    padding: 0 2px;
+    transition: 0;
+}
+i[data-pf2-repost]:hover {
+    text-shadow: 0;
+    color: #004;
+}
+#sidebar {
+    margin: 0 !important;
+    height: calc(100%) !important;
+}
+#sidebar.dorako-ui {
+    box-shadow: 0 !important;
+    border-radius: 0 !important;
+}
+/* a.content-link, [data-pf2-check], a.entity-link, [data-pf2-action], [data-pf2-effect-area], a.inline-roll:not(.inline-result),.pf2-icon, .pf2e.sheet form span.pf2-icon, .pf2e.sheet form span[data-pf2-action], .pf2e.sheet form span[data-pf2-action] *, .pf2e.sheet form span[data-pf2-check], .pf2e.sheet form span[data-pf2-check] * {
+    color: inherit !important;
+    background: #0001 !important;
+    padding: 0 2px !important;
+    border: 0 !important;
+    outline: 0.25em solid #0084 !important; 
+    border-radius: 0 !important;
+} */
+.dorako-ui .message-header .player-name, .dorako-ui .message-header .message-sender {
+    max-width: 140px !important;
+    letter-spacing: -0.05em;
+    /* white-space: initial !important; */
+    overflow:initial !important;
+}
+.dorako-ui .message-header .portrait-and-name .sender-wrapper .message-sender, .dorako-ui .message-header .portrait-and-name .sender-wrapper .player-name {
+    letter-spacing: -0.05em;
+}
+.player-name, .message-timestamp, .message-delete {
+    opacity: 0.667 !important;
+
+}
+/* .dorako-ui .message-header .message-metadata {
+    flex: 1 !important
+} */
+
+.chat-message .flavor-text h4.action {
+    line-height: 1 !important;
+    font-size: 120%;
+    font-variant: small-caps;
+}
+.chat-message .message-header {
+    line-height: 1 !important;
+}
+.dorako-ui .message-header {
+    margin: 0 !important;
+}
+.chat-message {
+    margin-top: 1px !important;
+    padding: 0 !important;
+}
+.tags {
+    gap: 0 !important;
+}
+.chat-message .dorako-header {
+    padding: 0 0.05em !important;
+    box-shadow: none !important;
+    gap: 0 !important;
+    border-radius: 0 !important;
+    /* min-height: 40px; */
+}
+.dorako-ui.message.chat-message .message-content {
+    margin: 0 !important;
+    margin-top: 0 !important;
+    padding: 0 0.1em !important;
+}
+.dorako-ui.message.chat-message.whisper {
+    /* opacity: 0.75 !important; */
+    /* filter: brightness(75%) contrast(90%); */
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+}
+.dorako-ui .message-header .portrait-and-name .sender-wrapper {
+    gap: 0 !important;
+}
+.dorako-ui.message.chat-message [data-visibility]:not([data-visibility="all"])[data-visibility="gm"] {
+    /* outline: 0.25em #0008 solid !important; */
+    /* background: #0002 !important; */
+    
+    border-radius: 0 !important;
+}
+.chat-message .flavor-text .target-dc-result .degree-of-success .failure,
+.chat-message .flavor-text .target-dc-result .degree-of-success .criticalFailure,
+.chat-message .flavor-text .target-dc-result .degree-of-success .criticalSuccess,
+.chat-message .flavor-text .target-dc-result .degree-of-success .success {
+    color: #000 !important;
+}
+
+.dorako-ui .message-header .portrait-and-name {
+    gap: 0 !important;
+}
+
+span[data-pf2-effect-area]::before {
+    display:none !important;
+}
+
+#chat-log .message.emote .message-content {
+    padding: 0 2px !important;
+    background: #0008 !important;
+    text-align:left !important;
+    font-style:normal !important;
+    font-size:1em !important;
+    color:#fff !important;
+    font-weight:400 !important;
+}
+
+.damagetype {
+    text-shadow: 1px 1px 0 #fff8;
+}
+.damagetype.sonic {
+    color: #063;
+}
+.damagetype.fire {
+    color: #600;
+}
+.damagetype.good {
+    color: #630;
+}
+.damagetype.positive {
+    color: #666;
+}
+.damagetype.negative {
+    color: #606
+}
+.damagetype.evil {
+    color: #306;
+}
+.damagetype.cold {
+    color: #006;
+}
+.damagetype.acid {
+    color: #060;
+}
+.damagetype.electricity {
+    color: #066;
+}
+.damagetype.force {
+    color: #603;
+}

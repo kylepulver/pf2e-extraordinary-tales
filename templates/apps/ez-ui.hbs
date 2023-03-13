@@ -1,0 +1,395 @@
+<div style="line-height:1;width:300px;bottom:0;z-index:100;right:{{right}}px;background:#111c;color:#ddd;position:fixed;">
+    <div style="padding:2px;">
+        {{#if combat}}
+        <div style="font-variant:small-caps">
+            <div style="display:flex;justify-content:space-around" class="hover-gold">
+                <div>
+                Round <strong>{{combat.round}}</strong>
+                </div>
+                {{#if isGM}}
+                <div data-action="combatnext" style="opacity:0.75">Next</div>
+                <div data-action="combatprev" style="opacity:0.75">Prev</div>
+                <div data-action="combatstart" style="opacity:0.5">Start</div>
+                <div data-action="combatend" style="opacity:0.5">End</div>
+                {{else}}
+                {{#if combat.combatant.token.isOwner}}
+                <div data-action="combatturn"><strong>End Turn</strong></div>
+                {{/if}}
+                {{/if}}
+            </div>
+            <div style="display:flex;justify-content:space-around" class="hover-gold">
+                <div>
+                Escalation <strong>{{coalesce combat.flags.pf2e-extraordinary-tales.escalation "0"}}</strong>
+                </div>
+                {{#if isGM}}
+                <div data-action="escup" style="opacity:0.75">
+                    Increase
+                </div>
+                <div data-action="escdown" style="opacity:0.75">
+                    Decrease
+                </div>
+                <div data-action="esczero" style="opacity:0.5">
+                    Zero
+                </div>
+                {{/if}}
+            </div>
+            <div style="max-height:150px;overflow-y:auto;overflow-x:hidden;scrollbar-width: thin;" style="hover-gold">
+            {{#each combat.turns}}
+            <div
+            style="
+                {{#if (eq ../combat.current.tokenId this.tokenId)}}color:#fd0;{{/if}}
+                {{#if this.defeated}}opacity:0.5{{/if}}
+                display:flex;align-items:center
+            " data-combatant="{{this.id}}">
+            {{#unless this.hidden}}
+            <img style="width:1.5em;height:1.5em" src="{{this.img}}"/>
+            <div style="padding-left:0.25em">
+            <strong>{{this.initiative}}</strong> {{this.name}}
+            </div>
+            {{/unless}}
+            </div>
+            {{/each}}
+            </div>
+        </div>
+        {{/if}}
+        <div style="height:2px"></div>
+
+        <div style="font-variant:small-caps;">
+            {{#with actor}}
+            <div style="display:flex">
+                <div style="flex:2;max-height:450px;overflow-y:auto;scrollbar-width: thin;" class="hover-gold">
+
+                <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-action="flatcheck" data-tip="Roll a d20 Flat Check">
+                    <span style="letter-spacing:-0.05em">d20 Flat Check</span>
+                </div>
+
+                <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-action="recallknowledge" data-tip="Attempt a secret Recall Knowledge check">
+                    <span style="letter-spacing:-0.05em">Recall Knowledge</span>
+                </div>
+                
+                <div data-action="moreactions" data-tip="View all available skill actions">
+                    <span style="letter-spacing:-0.05em">All Actions</span>
+                </div>
+
+                <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-key="system.attributes.initiative" data-tip="Roll initiative for an encounter">
+                    <span style="letter-spacing:-0.05em">Initiative</span>
+                </div>
+        <div style="height:2px"></div>
+
+                <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-key="system.attributes.perception">
+                    <span style="letter-spacing:-0.05em">Perception</span>
+                    {{this.system.attributes.perception.value}}
+                    <span style="letter-spacing:-0.05em;font-size:90%;opacity:0.75">({{add this.system.attributes.perception.value 10}})</span>
+                </div>
+
+        <div style="height:2px"></div>
+        {{#unless @root.config.hideSections.saveList}}
+                
+                {{#each this.saves}}
+                <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-key="saves.{{@key}}" >
+                    <span style="letter-spacing:-0.05em">{{this.label}}</span>
+                    {{this.mod}}
+                    <span style="letter-spacing:-0.05em;font-size:90%;opacity:0.75">({{this.dc.value}})</span>
+                </div>
+                {{/each}}
+        <div style="height:2px"></div>
+        {{/unless}}
+        {{#unless @root.config.hideSections.skillList}}
+
+                {{#each this.skills}}
+                <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-key="skills.{{@key}}">
+                    <span style="letter-spacing:-0.05em">{{this.label}}</span>&nbsp;{{this.mod}}&nbsp;<span style="letter-spacing:-0.05em;font-size:90%;opacity:0.75">({{this.dc.value}})</span>
+                </div>
+                {{/each}}
+
+        <div style="height:2px"></div>
+        {{/unless}}
+{{!-- 
+        {{#each this.spellcasting}}
+    <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-spell="{{this.id}}" style="font-size:90%">
+        <span style="letter-spacing:-0.05em;">{{this.name}}</span>&nbsp;{{this.statistic.mod}}&nbsp;<span style="letter-spacing:-0.05em;font-size:90%;opacity:0.75">({{add this.statistic.mod 10}})</span>
+    </div>
+        {{/each}}
+        <div style="height:2px"></div> --}}
+        {{#unless @root.config.hideSections.recoveryActions}}
+
+        <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-action="refocus" data-tip="Recover resources by refocusing">
+                    <span style="letter-spacing:-0.05em">Refocus</span>
+                </div>
+
+                <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-action="rest" data-tip="Recover resources by resting for 8 hours">
+                    <span style="letter-spacing:-0.05em">Rest (8 Hours)</span>
+                </div>
+
+                {{!-- <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-action="fullrest" data-tip="Recover resources by fully rest for 24 hours">
+                    <span style="letter-spacing:-0.05em">Full Rest (24 Hours)</span>
+                </div> --}}
+
+        {{!-- <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-action="countercheck">
+                    <span style="letter-spacing:-0.05em">Counteract Check</span>
+                </div> --}}
+    
+                {{!-- {{#each ../this.macros}}
+                <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-macro="{{this.id}}">
+                {{this.name}}
+                </div>
+                {{/each}} --}}
+
+        <div style="height:2px"></div>
+        {{/unless}}
+
+        {{#unless @root.config.hideSections.skillActions}}
+
+        {{#each ../actions}}
+            <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-pfaction="{{@key}}"><span style="letter-spacing:-0.05em;font-size:90%;opacity:0.75">{{this.name}}</span></div>
+        {{/each}}
+
+        {{/unless}}
+
+                {{!-- {{#each ../activities}}
+                <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-activity="{{this.id}}">
+                <span style="letter-spacing:-0.05em;font-size:90%;opacity:0.9">{{this.name}}</span>
+                </div>
+                {{/each}} --}}
+                
+                </div>
+                <div style="flex:3;max-height:450px;overflow-y:auto;scrollbar-width: thin;" class="hover-gold">
+        {{#unless @root.config.hideSections.toggleValues}}
+                    {{#each this.system.toggles}}
+                        <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-toggle="{{this.itemId}}">
+                        {{#if this.checked}}
+                        [&check;]
+                        {{else}}
+                        [<span style="opacity:0">&check;</span>]
+                        {{/if}}
+                        <span style="letter-spacing:-0.05em">{{this.label}}</span>
+
+                        </div>
+                    {{/each}}
+        {{/unless}}
+
+        {{#unless @root.config.hideSections.attackList}}
+                {{#each this.system.actions}}
+                    <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-act="{{@key}}">
+                        <span class="activity-icon">{{this.glyph}}</span>
+                        <span style="letter-spacing:-0.05em">{{this.label}}</span>
+                    </div>
+                {{/each}}
+        {{/unless}}
+
+        {{#unless @root.config.hideSections.freeActions}}
+                {{#each this.items}}
+                    {{#if (eq this.actionCost.type "free")}}
+                    <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-item="{{this.id}}">
+                    {{{actionGlyph "free"}}} <span style="letter-spacing:-0.05em">{{this.name}}</span>
+                    </div>
+                    {{/if}}
+                {{/each}}
+        {{/unless}}
+
+        {{#unless @root.config.hideSections.reactions}}
+                {{#each this.items}}
+                    {{#if (eq this.actionCost.type "reaction")}}
+                    <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-item="{{this.id}}">
+                    {{{actionGlyph "reaction"}}} <span style="letter-spacing:-0.05em">{{this.name}}</span>
+                    </div>
+                    {{/if}}
+                {{/each}}
+        {{/unless}}
+
+        {{#unless @root.config.hideSections.actions}}
+                {{#each this.items}}
+                    {{#if (eq this.actionCost.type "action")}}
+                    <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-item="{{this.id}}">
+                    {{{actionGlyph this.actionCost.value}}} <span style="letter-spacing:-0.05em">{{this.name}}</span>
+                    </div>
+                    {{/if}}
+                {{/each}}
+        {{/unless}}
+        <div style="height:2px"></div>
+
+        {{#unless @root.config.hideSections.spellList}}
+        {{#each ../this.spells}}
+        <div >
+        <span style="letter-spacing:-0.05em;font-size:85%">{{this.name}}</span>
+        <div data-casting="{{this.id}}" data-actor="{{../this.id}}" data-token="{{../this.token.id}}"> <span style="letter-spacing:-0.05em">Spell Attack</span> {{this.statistic.check.mod}} <span style="letter-spacing:-0.05em">DC</span> {{this.statistic.dc.value}}</div>
+        </div>
+        {{#each this.levels}}
+        {{#if this.active.length}}
+        <div style="letter-spacing:-0.05em;font-size:85%">
+            {{#if this.isCantrip}}
+            Cantrip
+            {{else}}
+            Level {{this.level}}
+            {{/if}}
+        </div>
+        {{#each this.active}}
+        <div data-actor="{{../../../this.id}}" data-token="{{../../../this.token.id}}" data-spell="{{this.spell.id}}" data-slot="{{this.spell.id}}" {{#if ../../this.isPrepared}}data-slot-id="{{@key}}"{{/if}} data-slot-level="{{../this.level}}" data-cast-level="{{chatData.castLevel}}" data-entry="{{../../this.id}}">
+            {{{actionGlyph this.spell.system.time.value}}} <span style="letter-spacing:-0.05em">{{this.spell.name}}</span>
+        </div>
+        {{/each}}
+        {{/if}}
+        {{/each}}
+        {{/each}}
+        <div style="height:2px"></div>
+        {{/unless}}
+
+        {{#unless @root.config.hideSections.passiveAbilities}}
+        {{#each this.items}}
+        {{#if (eq this.system.actionType.value "passive")}}
+        <div style="opacity:0.75" data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-item="{{this.id}}">
+        &bull; <span style="letter-spacing:-0.05em">{{this.name}}</span>
+        </div>
+        {{/if}}
+        {{/each}}
+        <div style="height:2px"></div>
+        {{/unless}}
+
+                {{!-- {{#each this.items}}
+                {{#if (or
+                    (eq this.type "spell")
+                    )}}
+                <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-item="{{this.id}}">
+                    {{{actionGlyph this.system.time.value}}} <span style="letter-spacing:-0.05em">{{this.name}}</span>
+                </div>
+                {{/if}}
+                {{/each}}
+        <div style="height:2px"></div> --}}
+
+                {{!-- {{#each this.items}}
+                {{#if (or
+                    (eq this.type "feat")
+                    )}}
+                <div style="opacity:0.75" data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-item="{{this.id}}">
+                    &bull;<span style="letter-spacing:-0.05em">{{this.name}}</span>
+                </div>
+                {{/if}}
+                {{/each}}
+        <div style="height:2px"></div> --}}
+
+        {{#unless @root.config.hideSections.equipmentList}}
+                {{#each this.items}}
+                {{#if (or
+                    (eq this.type "equipment")
+                    )}}
+                <div  style="opacity:0.75" data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-item="{{this.id}}">
+                    &bull;<span style="letter-spacing:-0.05em">{{this.name}}</span>
+                </div>
+                {{/if}}
+                {{/each}}
+        {{/unless}}
+                </div>
+            </div>
+            {{/with}}
+        </div>
+        <div>
+            <div style="display:flex;align-items:center;text-align:center;gap:2px;text-transform:uppercase">
+                <div style="flex:0 0 1.5rem">
+
+                </div>
+                <div style="flex:0 0 1.5rem" data-tip="Hit Points">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <div style="flex:0 0 1.25rem" data-tip="Armor Class">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div style="flex:0 0 1.25rem" data-tip="Class or Spell DC">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <div style="flex:0 0 1.25rem" data-tip="Perception">
+                    <i class="fa-solid fa-eye"></i>
+                </div>
+                <div style="flex:0 0 1.25rem" data-tip="Fortitude">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
+                <div style="flex:0 0 1.25rem" data-tip="Reflex">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div style="flex:0 0 1.25rem" data-tip="Will">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div style="flex:0 0 1.25rem" data-tip="Focus Points"> 
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div style="flex:0 0 1.25rem" data-tip="Hero Points">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <div style="flex:0 0 2rem" data-tip="Personal Uses and XP" data-action="extraordinarytales">
+                    <i class="fa-solid fa-person"></i>
+                </div>
+                <div style="flex:0 0 2rem" data-action="extraordinarytales" data-tip="Collateral Uses and XP">
+                    <i class="fa-solid fa-people-group"></i>
+                </div>
+            </div>
+            {{#each characters}}
+            <div style="display:flex;align-items:center;text-align:center;gap:2px;font-size:95%;letter-spacing:-0.025em;margin-top:-0.25em">
+            <div style="flex:0 0 1.5rem" data-action="message" data-actor="{{this.id}}">
+                <img style="max-height:1.5rem;max-width:1.5rem" src="{{this.prototypeToken.texture.src}}"/>
+            </div>
+            <div style="flex:0 0 1.5rem;" data-actor="{{this.id}}" data-action="hitpoints" data-tip="Edit Hit Points">
+                <span class="hover-gold">{{this.attributes.hp.value}}</span>
+            </div>
+            <div style="flex:0 0 1.25rem" >
+                {{this.attributes.ac.value}}
+            </div>
+            <div style="flex:0 0 1.25rem" >
+                {{this.attributes.classOrSpellDC.value}}
+            </div>
+            <div style="flex:0 0 1.25rem" >
+                {{this.attributes.perception.value}}
+            </div>
+            <div style="flex:0 0 1.25rem" >
+                {{this.saves.fortitude.check.mod}}
+            </div>
+            <div style="flex:0 0 1.25rem" >
+                {{this.saves.reflex.check.mod}}
+            </div>
+            <div style="flex:0 0 1.25rem" >
+                {{this.saves.will.check.mod}}
+            </div>
+            <div style="flex:0 0 1.25rem" >
+                {{this.system.resources.focus.value}}
+            </div>
+
+            <div style="flex:0 0 1.25rem" class="hover-gold" data-action="extraordinarytales">
+                <div>{{this.heroPoints.value}}</div>
+            </div>
+            
+            <div style="flex:0 0 2rem" data-action="personalxp" data-actor="{{this.id}}" data-tip="Use Personal Ability">
+                <span class="hover-gold">{{this.flags.pf2e-extraordinary-tales.personaluses}}
+                <span style="opacity:0.75;letter-spacing:-0.05em;font-size:90%">
+                {{this.flags.pf2e-extraordinary-tales.personalxp}}
+                </span>
+                </span>
+            </div>
+            <div style="flex:0 0 2rem" data-action="collateralxp" data-actor="{{this.id}}" data-tip="Use Collateral Ability">
+                <span class="hover-gold">{{this.flags.pf2e-extraordinary-tales.collateraluses}}
+                <span style="opacity:0.75;letter-spacing:-0.05em;font-size:90%">
+                {{this.flags.pf2e-extraordinary-tales.collateralxp}}
+                </span></span>
+            </div>
+            </div>
+            <div data-actor="{{this.id}}" style="padding-left:2em;text-transform:uppercase;font-size:75%;letter-spacing:-0.05em" data-action="exploration" data-tip="Edit Exploration Activity">
+                <span class="hover-gold">
+                {{#if this.flags.pf2e-extraordinary-tales.exploration-status}}
+               {{this.flags.pf2e-extraordinary-tales.exploration-status}}
+               {{else}}
+               Exploration
+               {{/if}}</span>
+            </div>
+            {{/each}}
+        </div>
+        <div style="height:2px"></div>
+
+        <div style="text-align:center; text-transform:uppercase;font-size:90%;position:relative" class="hover-gold">
+            <div data-action="extraordinarytales">
+                extraordinary tales
+            </div>
+            <div data-action="configure" style="position:absolute;right:0;top:0">
+                <i class="fa-solid fa-cog"></i>
+            </div>
+            
+        </div>
+
+    </div>
+</div>

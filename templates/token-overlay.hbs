@@ -1,0 +1,197 @@
+<form id="{{id}}" class="{{classes}}" data-appid="{{appId}}" autocomplete="off">
+{{#if show.estimate}}
+{{#if estimate}}
+    <div style="white-space:no-wrap;text-transform:uppercase;position: absolute;bottom:100%;width:300%;margin:0.25em 0;font-size:90%;left:-100%">
+        <div style="letter-spacing:-0.075em;background:#000d;padding:0 0.25em;border-radius:5px;display:inline-block;margin:0 auto">
+            <span style="color:{{health}};font-weight:bold">{{estimate}}</span>&nbsp;<span style="color:#ccc;">{{distance}}</span>
+        </div>
+    </div>
+{{/if}}
+{{/if}}
+
+{{#if show.any}}
+<div style="position:absolute;right:calc(100% + {{left}}px);top:-0em;background:#000d;border-radius:3px;color:#fff;padding:0.25em;line-height:1;text-align:left;margin:0 0.25em;text-transform:uppercase;min-width:10em;opacity:0.9">
+<div style="opacity:1">
+{{#if show.defense}}
+    <div style="font-size:85%;letter-spacing:-0.05em">
+        {{actor.name}}
+    </div>
+    <div>
+
+         <span style="font-size:85%; opacity: 0.75"><i class="fa-solid fa-shield-halved"></i></span>
+        {{actor.attributes.ac.value}}
+
+        <span style="font-size:85%; opacity: 0.75"><i class="fa-solid fa-eye"></i></span>
+        {{actor.attributes.perception.value}}
+
+         {{!-- <span style="font-size:85%"><i class="fa-solid fa-heart"></i></span>
+        {{actor.attributes.hp.value}}
+        /
+        {{actor.attributes.hp.max}} --}}
+</div>
+<div style="height:3px"></div>
+
+<div>
+        {{#each actor.saves}}
+        <span style="font-size:85%; opacity: 0.75">{{{icon this.slug}}}</span> {{this.check.mod}}
+        {{/each}}
+    </div>
+<div style="height:3px"></div>
+
+
+      {{#if actor.system.resources.focus.max}}
+    <div>
+        <span style="font-size:85%; opacity: 0.75"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+        {{actor.system.resources.focus.value}}
+        {{!-- /
+        {{actor.system.resources.focus.max}} --}}
+    </div>
+<div style="height:3px"></div>
+
+    {{/if}}
+
+     {{!-- {{#if actor.system.resources.heroPoints.max}}
+    <div>
+        <span style="font-size:85%"><i class="fa-solid fa-star"></i></span>
+        {{actor.system.resources.heroPoints.value}}
+        /
+        {{actor.system.resources.heroPoints.max}}
+    </div>
+<div style="height:3px"></div> 
+
+    {{/if}}--}}
+
+    <div>
+        <span style="font-size:85%; opacity: 0.75"><i class="fa-solid fa-turn-up"></i></span>
+        {{actor.level}}
+
+    {{#if actor.attributes.classDC.value}}
+        <span style="font-size:85%; opacity: 0.75"><i class="fa-solid fa-check"></i></i></span>
+        {{actor.attributes.classDC.value}}
+        {{/if}}
+
+    {{#if actor.attributes.spellDC.value}}
+        <span style="font-size:85%; opacity: 0.75"><i class="fa-solid fa-badge-check"></i></span>
+        {{actor.attributes.spellDC.value}}
+        {{/if}}
+    </div>
+<div style="height:3px"></div>
+
+
+    <div>
+        <span style="font-size:85%; opacity: 0.75">
+            {{{icon actor.attributes.speed.label}}}
+        </span>
+        <span>
+            {{actor.attributes.speed.total}}
+        </span>
+        <span style="font-size:85%; opacity: 0.75">
+            {{actor.attributes.speed.details}}
+        </span>
+        {{#each actor.attributes.speed.otherSpeeds}}
+        <div>
+
+        <span style="font-size:85%; opacity: 0.75">
+            {{{icon this.label}}}
+        </span>
+        <span>
+            {{this.total}}
+        </span>
+        <span style="font-size:85%; opacity: 0.75">
+            {{this.details}}
+        </span>
+        {{/each}}
+        </div>
+    </div>
+<div style="height:3px"></div>
+  
+    {{!-- <div>
+        {{#each actor.skills}}
+        <span style="font-size:85%">{{this.slug}}</span>&nbsp;{{this.check.mod}}
+        {{/each}}
+    </div>
+<div style="height:3px"></div> --}}
+
+
+    {{#if actor.attributes.immunities}}
+    <div >
+        <span style="opacity:0.75;"><i class="fa-solid fa-octagon-xmark"></i></span>
+        {{#each actor.attributes.immunities}}
+        <span style="font-size:75%;letter-spacing:-0.05em">{{this.type}}</span> 
+        {{/each}}
+    </div>
+<div style="height:3px"></div>
+
+    {{/if}}
+
+    {{#if actor.attributes.weaknesses}}
+    <div >
+        <span style="opacity:0.75;"><i class="fa-solid fa-shield-minus"></i></span>
+        {{#each actor.attributes.weaknesses}}
+        <span style="font-size:75%;letter-spacing:-0.05em">{{this.type}}</span> {{this.value}} 
+        {{/each}}
+    </div>
+<div style="height:3px"></div>
+
+    {{/if}}
+
+
+    {{#if actor.attributes.resistances}}
+    <div >
+        <span style="opacity:0.75;"><i class="fa-solid fa-shield-plus"></i></span>
+        {{#each actor.attributes.resistances}}
+        <span style="font-size:75%;letter-spacing:-0.05em">{{this.type}}</span> {{this.value}} 
+        {{/each}}
+    </div>
+<div style="height:3px"></div>
+
+    {{/if}}
+
+
+
+{{#if actor.system.traits.languages.value}}
+    <div >
+        <span style="opacity:0.75;"><i class="fa-solid fa-comment"></i></span>
+        {{#each actor.system.traits.languages.value}}
+        <span style="font-size:75%;letter-spacing:-0.05em">{{this}}</span>
+        {{/each}}
+        </div>
+<div style="height:3px"></div>
+    {{/if}}
+
+{{#if actor.system.traits.senses.value}}
+<div> 
+        <span style="opacity:0.75"><i class="fa-regular fa-magnifying-glass-plus"></i></span>
+        <span style="font-size:75%;letter-spacing:-0.05em"> {{actor.system.traits.senses.value}}</span>
+       
+</div>
+<div style="height:3px"></div>
+    {{/if}}
+
+<div  >
+
+        <span style="opacity:0.75"><i class="fa-solid fa-image-portrait"></i></span>
+        <span style="font-size:75%;letter-spacing:-0.05em">{{actor.system.details.alignment.value}}</span>
+        {{#each actor.system.traits.value}}
+        <span style="font-size:75%;letter-spacing:-0.05em">{{this}}</span>
+        {{/each}}
+</div>
+
+
+{{/if}}
+<div style="height:3px"></div>
+{{#each actor.items}}
+{{#if (eq this.type "condition")}}
+<div >
+    &bull; <span>{{this.name}}</span>
+</div>
+{{/if}}
+{{/each}}
+</div>
+  
+</div>
+{{/if}}
+
+
+
+</form>

@@ -1,0 +1,6 @@
+<div>
+    {{> "modules/pf2e-extraordinary-tales/templates/chat/header.hbs" item=this}}
+    {{#with extratales.roll}}
+    {{> "modules/pf2e-extraordinary-tales/templates/chat/instance.hbs" item=this}}
+    {{/with}}
+</div>
