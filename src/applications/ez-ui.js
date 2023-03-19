@@ -587,9 +587,11 @@ export default class ExtraTalesEzUi extends Application {
         data.spells = false;
         if (data.actor) {
             data.spells = await Promise.all(data.actor.spellcasting.map(async(entry) => {
-                let data = entry.toObject(false);
-                let spellData =  await entry.getSpellData();
-                return mergeObject(data, spellData)
+                if (entry.toObject) {
+                    let data = entry.toObject(false);
+                    let spellData =  await entry.getSpellData();
+                    return mergeObject(data, spellData)
+                }
             }))
         }
 
