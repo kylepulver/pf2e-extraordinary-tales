@@ -478,7 +478,7 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
         for(let k in aid) {
             if (aid[k]) {
                 let actor = game.actors.get(k);
-                append += `<div>Aiding <strong>${actor.name}</strong></div>`;
+                append += `<div style="display:flex;align-items:center;gap:0.25em"><img style="max-height:1.25em;max-width:1.25em" src="${actor.prototypeToken.texture.src}"/> Aiding <strong>${actor.name}</strong></div>`;
             }
         }
         if (append) {
@@ -497,14 +497,23 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
         html.append(`<div style="background:#0002;padding:0.25em;margin:0.25em;text-align:center;font-weight:bold;text-transform:uppercase">${outcometext}</div>`)
     }
 
-    if (!game.user.isGM ) {
-        if (!obj.isContentVisible || obj.blind) {
+    if (!obj.isContentVisible || obj.blind) {
+        // html.find('[data-info]').css("outline", "#ccc 2px solid")
+        if (!game.user.isGM ) {
             html.find('[data-info]').html("<span>?</span>")
             html.find('.inline-roll').after(`<span style="background:#eee;color:#222;outline:#eee 2px solid"><i class="fa-solid fa-dice-d20"></i> ? </span>`)
             html.find('.inline-roll').remove();
             html.find('[data-dice-style]').removeAttr('style')
-            html.after("<div>not visible</div>")
         }
+        html.find('[data-total]').css("background", "#0002")
+        html.find('[data-info]').css("color", "#eee")
+        html.find('[data-info]').css("text-shadow", "0 0 3px #000,0 0 3px #000,0 0 3px #000")
+        
+    }
+
+    if (!obj.isContentVisible || obj.whisper.length) {
+        html.css("position", "relative");
+        html.append(`<div style="inset:0;background:#0003;z-index:10;position:absolute;pointer-events:none"></div>`)
     }
 
     
@@ -600,17 +609,19 @@ todo:
 - OK remove giant skull from dead condition
 - OK fix hero point reroll not showing 3d dice for all players
 - OK separate precision damage
+- OK adjust roll with simple plus or minus
+- OK fix secret rolls speaker info being replaced
 
 - add token to aid ui
 - add token to add chat message
+- reroll as secret
+- set to public
 
 - calculate scuff damage
-- fix secret rolls speaker info being replaced
 - revise recall knwoledge macro to own thing
 - add indication to roll when rerolled with hero point
 
 - editing rolls
-- adjust roll with simple plus or minus
 - adjust damage instance with simple plus or minus
 
 - show "spell" when ability is spell

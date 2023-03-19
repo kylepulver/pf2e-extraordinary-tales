@@ -169,6 +169,7 @@ section.chat-sidebar {
     overflow-y: auto  !important;
     overflow-x:hidden !important;
     scrollbar-width: thin !important;
+    font-family: var(--font-primary) !important;
     /* scrollbar-color: initial transparent !important; */
     
 }
@@ -198,7 +199,8 @@ section.chat-sidebar {
 .pf2e.chat-card .card-header {
     padding: 0 !important;
 }
-.dorako-ui.message.chat-message .message-content .pf2e.chat-card .card-header h3 {
+.dorako-ui.message.chat-message .message-content .pf2e.chat-card .card-header h3
+{
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     line-height: 0.95 !important;
@@ -206,7 +208,11 @@ section.chat-sidebar {
     font-size: 80%;
     font-variant: small-caps;
     font-weight: 600;
-    font-family: var(--sans-serif) !important;
+    font-family: var(--font-primary) !important;
+}
+.flavor-text strong {
+    font-variant: small-caps;
+    letter-spacing: -0.025em !important;
 }
 #chat-log {
     scrollbar-width: thin !important;
@@ -214,7 +220,10 @@ section.chat-sidebar {
 p.compact-text, section.roll-note {
     margin: 0 !important;
     line-height: 1.15 !important;
-    font-size: 90%;
+    font-size: 95%;
+}
+.pf2e.chat-card .card-content p {
+    margin: 0 !important;
 }
 .app.sheet.actor p, .pf2e p {
     font-weight: normal !important;
@@ -223,7 +232,10 @@ p.compact-text, section.roll-note {
 table.pf2-table td, table.pf2-table th {
     padding: 0 !important;
 }
-
+.pf2e.chat-card .card-footer {
+    padding: 0 !important;
+    font-family: var(--font-primary) !important;
+}
 .message-content .dice-roll .statuseffect-rules {
     transition: none !important;
 }
@@ -239,9 +251,10 @@ span[data-pf2-effect-area],
 span[data-pf2-check],
 span[data-pf2-action] {
     background: #fffc !important;
-    padding: 0 2px !important;
+    padding: 0  !important;
     border: 0 !important;
     outline: 0 !important;
+    line-height: inherit !important;
     /* outline: 0.25em solid #0084; */
     color: #000 !important;
     border-radius: 0 !important;
@@ -295,6 +308,11 @@ table td, table th {
     /* white-space: initial !important; */
     overflow:initial !important;
 }
+.dorako-ui .message-header .header-meta {
+    padding: 0 !important;
+    border: 0 !important;
+    outline: 0 !important;
+}
 .dorako-ui .message-header .portrait-and-name .sender-wrapper .message-sender, .dorako-ui .message-header .portrait-and-name .sender-wrapper .player-name {
     letter-spacing: -0.05em;
 }
@@ -309,8 +327,6 @@ table td, table th {
 .chat-message .flavor-text h4.action {
     line-height: 1 !important;
     font-size: 120%;
-    padding-left:0.15em;
-    padding-top:0.15em;
     font-variant: small-caps;
 }
 .chat-message .message-header {
@@ -323,8 +339,14 @@ table td, table th {
     margin-top: 1px !important;
     padding: 0 !important;
 }
+.dice-roll {
+    border: 2px solid #0002 !important;
+}
 .tags {
     gap: 0 !important;
+}
+h4:empty {
+    display:none !important;
 }
 .chat-message .dorako-header {
     padding: 0 0.05em !important;
@@ -336,7 +358,7 @@ table td, table th {
 .dorako-ui.message.chat-message .message-content {
     margin: 0 !important;
     margin-top: 0 !important;
-    padding: 0 0.1em !important;
+    padding: 0.1em !important;
 }
 .dorako-ui.message.chat-message.whisper {
     /* opacity: 0.75 !important; */
@@ -353,7 +375,9 @@ h1, h2, h3, h4 {
 .dorako-ui.message.chat-message [data-visibility]:not([data-visibility="all"])[data-visibility="gm"] {
     /* outline: 0.25em #0008 solid !important; */
     /* background: #0002 !important; */
-    
+    border: 0 !important;
+    outline: 0 !important;
+    text-shadow: 0 0 2px #f80,0 0 2px #f80,0 0 2px #f80,0 0 2px #f80;
     border-radius: 0 !important;
 }
 .chat-message .flavor-text .target-dc-result .degree-of-success .failure,
@@ -372,15 +396,21 @@ span[data-pf2-effect-area]::before {
 }
 
 #chat-log .message.emote .message-content {
-    padding: 0 0.25em !important;
-    background: #444 !important;
+    padding: 0.25em !important;
+    margin: 0.25em !important;
+    background: #000a !important;
     text-align:left !important;
     font-style:normal !important;
-    font-size:1em !important;
+    font-size:90% !important;
     color:#eee !important;
     font-weight:400 !important;
 }
-
+li.chat-message .tags .tag_transparent {
+    border-radius: 0 !important;
+    letter-spacing: -0.05em !important;
+    line-height: 1 !important;
+    border-bottom: 0 !important;
+}
 .damagetype {
     text-shadow: 1px 1px 0 #fff8;
 }

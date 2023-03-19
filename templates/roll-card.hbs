@@ -2,7 +2,7 @@
     {{#unless isDamageRoll}}
         {{#each rolls}}
             <div style="display:flex;align-items:center;line-height:1">
-                <div style="background:#fff4;font-size:200%;width:1.25em;overflow:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em" data-info>
+                <div style="background:#fff4;font-size:200%;width:1.5em;overflow:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em" data-info data-total>
                     {{total}}
                 </div>
 
@@ -12,23 +12,29 @@
                 </div>
                 {{/if}}
 
+                {{#if ../blind}}
+                <div style="padding:0 2px" data-tooltip="secret">
+                    <i class="fa-solid fa-eye-slash"></i>
+                </div>
+                {{/if}}
+
                 {{#each dice as |dice|}}
-                <div data-dice-style style="
+                <div data-dice-style style="padding:0 2px;
                 {{#if (eq this.faces 20)}}
                 {{#if (eq this.total 20)}}
-                padding:0 2px;color:#fff;background:#0ad;outline:2px #0ad8 solid;font-weight:bold;text-shadow:1px 1px 0 #000
+                color:#fff;background:#0ad;font-weight:bold;text-shadow:1px 1px 0 #000
                 {{/if}}
                 {{#if (eq this.total 1)}}
-                padding:0 2px;color:#fff;background:#d04;outline:2px #d048 solid;font-weight:bold;text-shadow:1px 1px 0 #000
+                color:#fff;background:#d04;font-weight:bold;text-shadow:1px 1px 0 #000;
                 {{/if}}
                 {{/if}}
                 ">
-                    <div style="font-size:75%;opacity:0.75;text-align:center;background:#0002">
+                    <div style="font-size:75%;opacity:0.75;text-align:center;background:#0002;font-weight:bold;padding: 0 1px">
                         {{dice.formula}} 
                     </div>
-                    <div style="text-align:center;margin-top:-0.2em">
+                    <div style="text-align:center;margin-top:-0.1em">
                     {{#each dice.results}}
-                        <span style="{{#if this.active}}font-size:120%;{{else}}text-decoration: line-through;opacity:0.25;{{/if}}" data-info>{{this.result}}</span>
+                        <span style="{{#if this.active}}font-size:120%;line-height:1;{{else}}text-decoration: line-through;opacity:0.25;{{/if}}" data-info>{{this.result}}</span>
                     {{/each}}
                     </div>
                 </div>
@@ -38,17 +44,17 @@
                 {{#if modifier}}
                 {{#if enabled}}
                 <div style="padding: 0 2px;{{#if ignored}}opacity:0.25{{/if}}">
-                    <div style="font-size:75%;opacity:0.75;text-align:center;text-transform:uppercase;background:#0002;padding:0 1px" data-tooltip="{{label}} ({{type}} {{kind}})">
+                    <div style="font-size:75%;opacity:0.75;text-align:center;text-transform:uppercase;background:#0002;padding:0 1px;letter-spacing:-0.05em" data-tooltip="{{label}} ({{type}} {{kind}})">
                         {{#if ability}}
                         {{ability}}
                         {{else if (eq label "Trained") }}
-                        (T)
+                        Trained
                         {{else if (eq label "Expert") }}
-                        (E)
+                        Expert
                         {{else if (eq label "Master") }}
-                        (M)
+                        Master
                         {{else if (eq label "Legendary") }}
-                        (L)
+                        Legend
                         {{else if (eq type "proficiency") }}
                         Prof
                         {{else if (eq label "Escalation") }}
@@ -56,11 +62,11 @@
                         {{else if (eq label "Multiple Attack Penalty")}}
                         MAP
                         {{else if (eq kind "modifier")}}
-                        Mod
+                        Modifer
                         {{else if (eq type "circumstance")}}
                         Circ
                         {{else if (eq type "status")}}
-                        Stat
+                        Status
                         {{else if (eq type "untyped")}}
                         {{kind}}
                         {{else}}
@@ -69,6 +75,21 @@
                     </div>
                     <div style="text-align:center;margin-top:-0.1em">
                         <span style="font-size:120%;">{{modifier}}</span>
+                    </div>
+                </div>
+                {{/if}}
+                {{/if}}
+                {{/each}}
+
+                {{#each terms}}
+                {{#if number}}
+                {{#if (eq flavor "adjust")}}
+                <div style="padding:0 2px">
+                    <div style="font-size:70%;opacity:0.75;text-align:center;text-transform:uppercase;background:#0002;padding:0 1px;letter-spacing:-0.05em">
+                        Adjust
+                    </div>
+                    <div style="text-align:center;margin-top:-0.1em">
+                        <span style="font-size:120%;">{{number}}</span>
                     </div>
                 </div>
                 {{/if}}
@@ -85,7 +106,7 @@
             {{#each instances as |instance|}}
             <div class="damagetype {{instance.type}}" style="line-height:1;text-transform:uppercase;letter-spacing:-0.025em;padding:1px 0">
                 <div style="display:flex;gap:2px;align-items:center">
-                    <div style="background:#fff4;font-size:200%;width:1.25em;overflow:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em">
+                    <div style="background:#fff4;font-size:200%;width:1.5em;overflow:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em">
                         {{#if instance.total}}
                         {{instance.total}}
                         {{else}}
@@ -105,9 +126,11 @@
 
                         <div style="display:flex;gap:2px;align-items:center">
                         {{#each instance.dice as |dice|}}
+                            {{#if (gt instance.dice.length 1)}}
                             <div style="opacity:0.75;outline:#0004 1px solid;padding:0 1px;white-space:nowrap">
                                 <span style="font-size:80%;">{{dice.formula}}</span>
                             </div>
+                            {{/if}}
                             {{#each dice.results}}
                             <div style="background:#0001;outline:#0004 1px solid;padding:0 1px;white-space:nowrap">
                                 <span style="font-size:80%;">{{this.result}}</span>
@@ -140,14 +163,28 @@
             </div>
             {{/each}}
 
-            {{#if (gt instances.length 1)}}
-                <div style="display:flex;align-items:center;gap:0.25em;justify-content:center;line-height:1">
-                <div style="font-size:200%;letter-spacing:-0.05em">
+            {{#each terms}}
+            {{#if number}}
+            {{#if (eq flavor "adjust")}}
+            
+            <div style="line-height:1;text-transform:uppercase;letter-spacing:-0.025em;padding:1px 0">
+                <div style="display:flex;gap:2px;align-items:center">
+                <div style="background:#fff4;font-size:200%;width:1.5em;overflow:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em">
+                    {{number}}
+                </div>
+                <div style="opacity:0.8">
+                    Adjust
+                </div>
+            </div>
+            </div>
+            {{/if}}
+            {{/if}}
+            {{/each}}
+
+            {{#if (ne instances.[0].total total)}}
+                <div style="text-transform:uppercase;background:#0002;padding:0.25em;margin:0.25em;text-align:center;font-weight:bold">
                     {{total}} 
-                </div>
-                <div style="text-transform:uppercase;letter-spacing:-0.025em">
-                    Total Damage
-                </div>
+                    <span style="font-size:85%">Total Damage</span>
                 </div>
             {{/if}}
             <div>
@@ -157,7 +194,7 @@
         {{else}}
     
         <div style="display:flex;align-items:center;line-height:1">
-            <div style="font-size:200%;width:1.25em;overflow:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em"  data-info>
+            <div style="font-size:200%;width:1.5em;overflow:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em"  data-info>
                 {{total}}
             </div>
 
