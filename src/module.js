@@ -45,20 +45,33 @@ Hooks.on('init', () => {
         fortitude: "fa-regular fa-heart",
         reflex: "fa-solid fa-bolt",
         will: "fa-solid fa-brain",
-        "land speed": "fa-solid fa-shoe-prints",
-        "fly speed": "fa-solid fa-feather",
-        "burrow speed": "fa-solid fa-shovel",
-        "swim speed": "fa-solid fa-water",
-        "climb speed": "fa-solid fa-pickaxe"
+        "land speed": "fa-solid fa-person-running",
+        "fly speed": "fa-solid fa-child-reaching",
+        "burrow speed": "fa-solid fa-person-digging",
+        "swim speed": "fa-solid fa-person-swimming",
+        "climb speed": "fa-solid fa-person-hiking"
     }
     Handlebars.registerHelper("icon", (value) => {
         if (!value.toLowerCase)return value;
         if (icondata.hasOwnProperty(value.toLowerCase().trim())) {
-            return `<i class="${icondata[value.toLowerCase().trim()]}"></i>`;
+            return `<i class="${icondata[value.toLowerCase().trim()]} fa-fw"></i>`;
         }
         return value;
     })
+
+    Handlebars.registerHelper("dmg_component", (dmg, component) => {
+        return dmg.componentTotal(component)
+        
+    })
     
+    Handlebars.registerHelper("scuff_dmg", (msg) => {
+        let total = 0;
+        for(let i of msg.flags.pf2e.modifiers) {
+            if (i.enabled && !i.ignored && i.kind == "modifier") {
+                total += i.modifier
+            }
+        }
+    })
 })
 
 Hooks.on("ready", () => {
@@ -87,14 +100,11 @@ Hooks.on("ready", () => {
             keep = "best"
         }
         const actor = game.actors.get(message.speaker.actor ?? "");
-        // console.log(message);
-        // let roll = message.rolls[0].clone();
-        // let reroll = await roll.reroll();
-        // console.log(reroll);
-        // let rolls = message.rolls;
-        // rolls.push(reroll);
+  
+        let rerollhistory = message.getFlag("pf2e-extraordinary-tales", "rerollhistory") ?? [];
+
         let newroll = await new Roll("d20").roll()
-        await game.dice3d.showForRoll(newroll, message.author, false, message.whisper, message.blind, message.id, message.speaker);
+        await game.dice3d.showForRoll(newroll, message.author, true, null, message.blind, message.id, message.speaker);
         let roll = message.rolls[0];
         let die = roll.dice[0];
         die.results.push(newroll.dice[0].results[0]);
@@ -107,16 +117,10 @@ Hooks.on("ready", () => {
         }
         if (keep == "best") {
             r1.active = r1.result > r0.result;
-            
-            // die.results.forEach((v, i, a) => v.active = parseInt(v.result) > parseInt(a[a.length-1].result))
         }
         if (keep == "worst") {
             r1.active = r1.result < r0.result;
-            
-            // die.results.forEach((v, i, a) => v.active = parseInt(v.result) < parseInt(a[a.length-1].result))
         }
-        // roll.isReroll = true;
-        // console.log(roll);
         r0.active = !r1.active;
 
         if (heroPoint == true) {
@@ -126,6 +130,9 @@ Hooks.on("ready", () => {
                     await actor.update({
                         "system.resources.heroPoints.value": Math.clamped(heroPointCount - 1, 0, 3),
                     });
+                    ChatMessage.create({
+                        content: `<strong>${actor.name}</strong> uses a Hero Point to reroll!<br /><i class="fa-solid fa-star"></i> Hero Points (${heroPointCount}) <i class="fa-solid fa-arrow-right"></i> (${heroPointCount - 1})`
+                    })
                 } else {
                     ui.notifications.warn(game.i18n.format("PF2E.RerollMenu.WarnNoHeroPoint", { name: actor.name }));
                     return;
@@ -137,50 +144,20 @@ Hooks.on("ready", () => {
         }
 
         roll._total = roll._evaluateTotal();
-        // message.rolls.push(roll);
-        // console.log(message);
-        message.setFlag("pf2e", "context.isReroll", true);
-        message.update({"rolls": duplicate(message.rolls)})
-        // message.update({"rolls": duplicate(message.rolls)},  {diff: false, recursive: false, noHook: true})
-        // message.setFlag("pf2e-extraordinary-tales", "updated", Date.now());
+        await message.setFlag("pf2e", "context.isReroll", true);
+        await message.update({"rolls": duplicate(message.rolls)})
     }
 
     new ExtraTalesEzUi().render(true);
-
 })
 
 Hooks.once("socketlib.ready", () => {
 	ExtraTalesCore.socket = socketlib.registerModule("pf2e-extraordinary-tales");
-	// socket.register("hello", showHelloMessage);
-	// socket.register("add", add);
+
     ExtraTalesCore.socket.register("promptCollateral", ExtraTalesCore.promptCollateralXP)
 });
 
 Hooks.on('getChatLogPF2eEntryContext', (obj, items) => {
-
-    // console.log(items);
-    // console.log(items.find(i => i.name == "PF2E.RerollMenu.HeroPoint"));
-
-    // Make hero points keep the higher result
-    // let heropointitem = items.find(i => i.name == "PF2E.RerollMenu.HeroPoint");
-    // heropointitem.callback = async li => {
-    //     const message = game.messages.get(li.data("messageId"), {strict:true});
-    //     const actor = game.actors.get(message.speaker.actor ?? "");
-    //     if (actor) {
-    //         const heroPointCount = actor.heroPoints?.value ?? 0
-    //         if (heroPointCount) {
-    //             game.pf2e.Check.rerollFromMessage(message, { keep: "best"});
-
-    //             await actor.update({
-    //             "system.resources.heroPoints.value": Math.clamped(heroPointCount - 1, 0, 3),
-    //             });
-    //         }
-    //         else {
-    //             ui.notifications.warn(game.i18n.format("PF2E.RerollMenu.WarnNoHeroPoint", { name: actor.name }));
-    //             return;
-    //         }
-    //     }
-    // }
 
     items.push({
         name: "Mark as Aid",
@@ -191,46 +168,133 @@ Hooks.on('getChatLogPF2eEntryContext', (obj, items) => {
         }
     },{
         name: "Reveal Details",
-        icon: "<i class=\"fa-solid fa-eye\"></i>",
+        icon: "<i class=\"fa-solid fa-clipboard\"></i>",
         condition: li => {
             return game.user.isGM;
-            const message = game.messages.get(li.data("messageId"));
-
         },
         callback: li => {
             if (!game.user.isGM) return;
 
             const message = game.messages.get(li.data("messageId"));
-            // new ExtraTalesAid(message).render(true)
-            let val = message.getFlag("pf2e-extraordinary-tales", "revealed") ?? false;
-            message.setFlag("pf2e-extraordinary-tales","revealed", !val )
-            console.log("message reveal state now ", !val)
+            let revealed = message.getFlag("pf2e-extraordinary-tales", "revealed") ?? false;
+            let revealedto = message.getFlag("pf2e-extraordinary-tales", "revealedto") ?? [];
+
+            let content = `<form>`;
+            for(let u of game.users.filter(u => !u.isGM)) {
+                let checked = revealedto.includes(u.id) ? "checked" : "";
+                content += `<div class="form-group"><div style="flex: 0 0 2em"><input type="checkbox" name="${u.id}" ${checked}></div><label>${u.character.name} (${u.name}) </label></div>`
+            }
+            let allchecked = revealed ? "checked" : "";
+            content += `<div class="form-group"><div style="flex: 0 0 2em"><input type="checkbox" name="all" ${allchecked}></div><label>All Players</label></div></form>`
+
+            new Dialog({
+                title: `Reveal Details`,
+                content: content,
+                render: html => {
+                    html.on('change', '[type="checkbox"]', (ev) => {
+                        if (ev.currentTarget.name == "all") {
+                            revealed = ev.currentTarget.checked || false;
+                        }
+                        else {
+                            if (ev.currentTarget.checked) {
+                                revealedto.push(ev.currentTarget.name)
+                            }
+                            else {
+                                revealedto = revealedto.filter(i => i != ev.currentTarget.name);
+                            }
+                        }
+                    })
+                },
+                buttons: {
+                    button1: {
+                        label: "Save",
+                        callback: async () => {
+                            await message.setFlag("pf2e-extraordinary-tales", "revealed", revealed)
+                            await message.setFlag("pf2e-extraordinary-tales", "revealedto", revealedto)
+                        },
+                        icon: `<i class="fas fa-check"></i>`
+                        },
+                    button2: {
+                        label: "Cancel",
+                        callback: () => { },
+                        icon: `<i class="fas fa-times"></i>`
+                    }
+                }
+            }).render(true);
         }
     })
 
     return items;
 })
 
-// Hooks.on('renderChatLogPF2e', (app, html, data) => {
+Hooks.on('renderChatLogPF2e', (app, html, data) => {
+    $(".roll-type-select option[value=publicroll]").text("Public Roll to All");
+    $(".roll-type-select option[value=gmroll]").text("Public Roll to Self and GM");
+    $(".roll-type-select option[value=selfroll]").text("Test Roll to Self Only");
+    $(".roll-type-select option[value=blindroll]").text("Secret Roll to GM");
 
-//     html.append(`<div style="flex: 0 0;margin:0 6px"><button type="submit" id="extra-tales-button">Extraordinary Tales</div></div>`);
+    html.on("click", "[data-outcome]", (ev) => {
+        let outcome = ev.currentTarget.dataset.outcome;
+        let msgid = $(ev.currentTarget).closest("[data-message-id]").data("messageId");
+        let msg = game.messages.get(msgid);
+        msg.setFlag("pf2e-extraordinary-tales", "outcome", outcome)
+    })
 
-//     html.on('click',  '#extra-tales-button', () => {
-//     let t = new ExtraTalesEditor().render(true);
+    if (!game.user.isGM) {
+        // The timeout is for other modules that mess with this html too
+        setTimeout(() => {
+                
+            html.find(".control-buttons").before(`<div style="flex: 0"><a data-missive title="Message GM" data-tooltip="Send Message to GM"><i class="fas fa-comment"></i></a></div>`)
 
-
-// })
-// })
+            html.on('click', '[data-missive]', (ev) => {
+                let content = `<textarea style="min-height:20em" autofocus></textarea>`
+                let whisper = "";
+                new Dialog({
+                    title: `Send Message to GM`,
+                    content: content,
+                    render: html => {
+                        html.on('input', 'textarea', (ev) => {
+                            whisper = ev.currentTarget.value;
+                        })
+                    },
+                    buttons: {
+                        button1: {
+                            label: "Send",
+                            callback: () => {
+                                ChatMessage.create(
+                                    {
+                                        flavor: "",
+                                        speaker: { alias: `To GM (${game.user.name})` },
+                                        flags: {
+                                            "core.canPopout": true,
+                                        },
+                                        user: game.user.id,
+                                        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+                                        content: whisper,
+                                        whisper: [game.users.find(i => i.isGM).id],
+                                    }
+                                )
+                            },
+                            icon: `<i class="fas fa-check"></i>`
+                            },
+                        button2: {
+                            label: "Cancel",
+                            callback: () => { },
+                            icon: `<i class="fas fa-times"></i>`
+                        }
+                    }
+                }).render(true);
+            })
+        }, 500);
+    }
+})
 
 Hooks.on('chatMessage', (obj, message, data) => {
-    // console.log("chat message", obj,message, data);
-
     let cancel = false;
 
     try {
         if (Roll.validate(message)) {
             let r = new Roll(message)
-            // r.evaluate();
             r.toMessage();
             cancel = true;
         }
@@ -264,9 +328,7 @@ Hooks.on("deleteToken", (a, b, c, d) => {
 Hooks.on("renderTokenHUD", (token, b, c, d) => {
     if (canvas.hud.tokenOverlay)
         canvas.hud.tokenOverlay.render();
-    // canvas.hud.tokenOverlay.bind(token);
 });
-
 
 Hooks.on("hoverToken", (token, hovered) => {
     if (!canvas.hud.tokenOverlay) return;
@@ -298,26 +360,42 @@ Hooks.on("hoverMeasuredTemplate", (t, hovered) => {
     }
 });
 
-Hooks.on(`renderChatMessage`, async (app, html, data) => {
-    // console.log("render chat message", app, html, data);
+Hooks.on("updateToken", (a, b, c, d) => {
+    console.log("=== update token", a, b, c, d)
+    if (a.overlayEffect) {
+        a.update({overlayEffect: ""})
+    }
+})
 
-    let actor = app.token?.actor ?? app.actor ?? false;
+Hooks.on(`renderChatMessage`, async (obj, html, data) => {
 
-    console.log(app)
+    let actor = obj.token?.actor ?? obj.actor ?? false;
+
+    console.log(obj)
+
+    
+
     let etconfig = game.user.getFlag("pf2e-extraordinary-tales", "config") ?? {};
-    if (!etconfig.chat?.defaultCards && app.rolls?.length) {
+    if (!etconfig.chat?.defaultCards && obj.rolls?.length) {
         
-        let rendered = await renderTemplate("modules/pf2e-extraordinary-tales/templates/roll-card.hbs", app)
+        
+
+        let rendered = await renderTemplate("modules/pf2e-extraordinary-tales/templates/roll-card.hbs", obj)
         html.find(".dice-roll").html(rendered)
     }
 
+    // stop the "privately rolled some dice" message
+    // does anyone actually like that?
+    // i feel like it's always the first thing that people remove
+    // usually with like, "actually private rolls" or whatever
+    html.find('.flavor-text').html(await TextEditor.enrichHTML(obj.flavor, {async: true}));
 
-    let revealState = app.getFlag("pf2e-extraordinary-tales", "revealed") ?? false;
 
-    // console.log(app);
-// console.log(html.find('.card-content'));
+    let revealState = obj.getFlag("pf2e-extraordinary-tales", "revealed") ?? false;
 
-    if (!app.user.isGM) {
+
+
+    if (!obj.user.isGM) {
         // messages not created by GM are never unrevealed
         revealState = true;
     }
@@ -327,22 +405,28 @@ Hooks.on(`renderChatMessage`, async (app, html, data) => {
     }
 
     let reveal = revealState;
-    // console.log(actor, game.users.filter(i => i.character?.id == actor.id));
-    // if (app.getFlag("pf2e-extraordinary-tales", "revealed") == true) {
-    //     reveal = true;
-    // }
+
     if (actor) {
         if (game.users.filter(i => i.character && i.character.id == actor.id).length) {
             reveal = true;
-            revealState = true; // if
+            revealState = true;
         }
         if (actor.testUserPermission(game.user, 2)) {
             reveal = true;
         }
+        let revealedto = obj.getFlag("pf2e-extraordinary-tales", "revealedto") ?? [];
+        if (revealedto.includes(game.user.id)) {
+            reveal = true;
+        }
+
+    }
+    else {
+        reveal = true;
+        revealState = true;
     }
 
     if (reveal) {
-      
+
     }
     else {
         html.find('.card-header h3').first().html("Ability")
@@ -353,77 +437,83 @@ Hooks.on(`renderChatMessage`, async (app, html, data) => {
         
     }
 
+    // note: show tokens of players that can see it
+    // reveal for specific people, add a list of allowed user ids
+    // 
+
     if (game.user.isGM) {
         if (!revealState) {
-            html.append(`<div style="text-align:center;text-transform:uppercase;font-size:90%;opacity:0.75">Content hidden for players.</div>`);
+            html.append(`<div style="background:#0002;padding:0.25em;margin:0.25em;text-align:center;font-weight:bold;text-transform:uppercase">Content hidden</div>`);
+            let revealedto = obj.getFlag("pf2e-extraordinary-tales", "revealedto") ?? [];
+            for(let u of revealedto) {
+                let user = game.users.get(u);
+                html.append(`<div style="background:#0002;padding:0.25em;margin:0.25em;text-align:center;text-transform:uppercase;font-size:80%">Revealed to ${user.character.name}</div>`);
+
+                // if (game.user.id == u) {
+
+                // }
+            }
         }
     }
 
-    let aid = app.getFlag('pf2e-extraordinary-tales','aid') ?? false;
+    if (game.user.isGM && obj.isRoll) {
 
+        let $content = html.find('.message-content');
+        $content.append(`<div class="hover-reveal hover-gold" style="font-size:85%;line-height:1;padding:0.25em;position:absolute;top:-0.75em;right:0.25em;background:#333;color:#ddd;font-weight:bold;border-radius:3px">
+        <div data-outcome="cf" data-tooltip="Critical Failure" style="width:1.25em;text-align:center;display:inline-block">CF</div>
+        <div data-outcome="f" data-tooltip="Failure" style="width:1.25em;text-align:center;display:inline-block">F</div>
+        <div data-outcome="" data-tooltip="Remove Outcome" style="width:1.25em;text-align:center;display:inline-block">&times;</div>
+        <div data-outcome="s" data-tooltip="Success" style="width:1.25em;text-align:center;display:inline-block">S</div>
+        <div data-outcome="cs" data-tooltip="Critical Success" style="width:1.25em;text-align:center;display:inline-block">CS</div>
+        </div>`)
+        $content.addClass("hover-reveal-container");
+        $content.css("position", "relative");
+
+    }
+
+    let aid = obj.getFlag('pf2e-extraordinary-tales','aid') ?? false;
 
     if (aid !== false) {
         let append = ``;
         for(let k in aid) {
             if (aid[k]) {
                 let actor = game.actors.get(k);
-                append += `<span class="tag tag_transparent">Aiding ${actor.name}</span>`;
+                append += `<div>Aiding <strong>${actor.name}</strong></div>`;
             }
         }
         if (append) {
-            html.append(`<div class="tags">${append}</div>`)
+            html.append(`<div style="background:#0002;padding:0.25em;margin:0.25em;text-transform:uppercase">${append}</div>`)
         }
-
     }
+
+    let outcome = obj.getFlag('pf2e-extraordinary-tales','outcome') ?? false;
+
+    if (outcome) {
+        let outcometext = "";
+        if (outcome == "s") outcometext = "Success";
+        if (outcome == "cs") outcometext = "Critical Success";
+        if (outcome == "f") outcometext = "Failure";
+        if (outcome == "cf") outcometext = "Critical Success";
+        html.append(`<div style="background:#0002;padding:0.25em;margin:0.25em;text-align:center;font-weight:bold;text-transform:uppercase">${outcometext}</div>`)
+    }
+
+    if (!game.user.isGM ) {
+        if (!obj.isContentVisible || obj.blind) {
+            html.find('[data-info]').html("<span>?</span>")
+            html.find('.inline-roll').after(`<span style="background:#eee;color:#222;outline:#eee 2px solid"><i class="fa-solid fa-dice-d20"></i> ? </span>`)
+            html.find('.inline-roll').remove();
+            html.find('[data-dice-style]').removeAttr('style')
+            html.after("<div>not visible</div>")
+        }
+    }
+
+    
     
     return;
 
-    let template = "roll";
-    data.extratales = {};
-    if (data.message.rolls.length) {
-        let rollobj = Roll.fromJSON(data.message.rolls);
-        console.log(rollobj);
-        data.extratales.roll = rollobj;
-        let instances = rollobj.instances ?? [];
-        if (instances.length) {
-            data.extratales.instances = instances;
-            template = "instances";
-        }
-        else {
-            template = "roll";
-        }
-
-    }
-    else {
-        template = "message";
-    }
-
-    
-    data.pf2e = app.flags.pf2e;
-    
-    console.log(data);
-    renderTemplate(`modules/pf2e-extraordinary-tales/templates/chat/${template}.hbs`, data).then(result => {
-        html.html(result);
-
-        html.on('click', 'button.full-damage', (ev) => {
-            applyDamageFromMessage({
-                message: data.message,
-                multiplier: 1,
-                addend: 0,
-                promptModifier: ev.shiftKey,
-                rollIndex: index,
-            });
-        })
-    })
 })
 
-// Hooks.on('renderActorSheetPF2e', (app, html, data) => {
-//     console.log("render actor sheet");
-//     console.log(app, html, data);
-// })
-
 Hooks.on("createChatMessage", (msg, options, user) => {
-    // console.log("create chat message", msg, options, user);
     if (msg.isAuthor) {
      
     } else {
@@ -446,15 +536,9 @@ Hooks.on('updateCombat', (a, b, c, d) => {
         return;
     }
 
-    // console.log(a, b, c, d);
     let esc = parseInt(game.combat.getFlag('pf2e-extraordinary-tales','escalation') ?? 0);
-    // console.log("UPDATE COMBAt")
-    // console.log(game.combat.combatants);
     for (let c of game.combat.combatants) {
-        // console.log(c);
         let t = canvas.tokens.get(c.tokenId);
-        // console.log(t)
-        // console.log(t.actor);
         let a = t.actor;
         if (a) {
             a.setFlag('pf2e-extraordinary-tales', 'escalation', esc)
@@ -463,9 +547,6 @@ Hooks.on('updateCombat', (a, b, c, d) => {
 })
 
 Hooks.on('renderCombatTracker', (app, html, data) => {
-    // console.log("render combat tracker")
-
-    // console.log(app, html, data);
 
     if (!game.combat) {
         return;
@@ -496,62 +577,53 @@ Hooks.on('renderCombatTracker', (app, html, data) => {
     })
 
 
-    // let rendered = new ExtraTalesCombat().render();
-    // console.log(rendered);
     html.find('.encounters').after(appendhtml)
 })
 
 
 /*
-thoughts:
-hero point reroll:
-override the function in pf2e on the prototype?
-
-spell counteract:
-need to just add it in the tipster
-
-
-spell attack:
-same as above
-
-exploration interface:
-just need to do a pass on the html
-change to hover over, click to add
-
-ez ui exploration actions:
-need to query the compendium and the macros n stuff
-
-token overlay icons:
-need to just get teh condition images in the template
-
-strike info:
-format the data into html
-
-config:
-set up some way to choose what to hide or show
-have things check their status from the config
-store the config in a user flag instead of settings
-
-damage chat card:
-on render chat message
-replace some things with own template
-
-damage adjustment window:
-add right click menu option
-create interface window
-apply damage from there
-
-prompt rolls from other players
-look at how the one macro does it
-socketlib to send the roll function
-maybe the function just calls roll on own character?? yeah thats it
 
 todo:
 
-- more strike info (melee / ranged)
+- OK collateral prompt fixed
+- OK too many modifiers were showing
+- OK make GM whispers more obvious
+- OK fix token hover errors
+- OK put HP back into token overlay
+- OK style footer aid and other stuff
+- OK chat: apply CF, F, S, CS effects from GM
+- OK rename dropdown roll modes menu
+- OK send GM secret message button
+- OK token overlay: status icons
+- OK fix climb icon
+- OK reveal chat cards to specific players
+- OK remove giant skull from dead condition
+- OK fix hero point reroll not showing 3d dice for all players
+- OK separate precision damage
 
+- add token to aid ui
+- add token to add chat message
+
+- calculate scuff damage
+- fix secret rolls speaker info being replaced
+- revise recall knwoledge macro to own thing
+- add indication to roll when rerolled with hero point
+
+- editing rolls
+- adjust roll with simple plus or minus
+- adjust damage instance with simple plus or minus
+
+- show "spell" when ability is spell
 - ez ui: spell attack map
-- token overlay: status icons
+- fix modifiers in skill roll preview
+- add rules text about skill in hover skill ez ui
+- format chat for @Check or whatever
+- format secret rolls more
+- reposition ez ui by dragging
+- more strike info (melee / ranged)
+- chat: type thing from ez ui to roll it
+- hide roll notes by default, click to expand
+- style chat tags
 - ez ui: multiple tokens selected show common elements
 - ez ui: filter content
 - ez ui: headers
@@ -565,10 +637,7 @@ todo:
 - template: tied to item
 - damage: scuff damage
 - damage: damage editor
-- chat: replace dice and damage style
-- chat: apply CF, F, S, CS effects from GM
 - chat: reminder pins from GM
-- chat: might not need mystify from pf2e workbench
 - chat: damage application window
 - chat: click to minimize card (hover minimized thing to see chat card)
 - pf2e: heroic harmony effect
@@ -577,11 +646,10 @@ todo:
 - journal: investigate simultaneous editing
 - macros: alternate macro list (disable hotbar)
 - extra tales: track aid
-- mystify names: unidentified, unknown, unfamiliar, monster, creature, etc
 
-- Attemped, but difficult:
-- pf2e: hero point keep the better result
-
+- OK chat: might not need mystify from pf2e workbench
+- OK pf2e: hero point keep the better result
+- OK chat: replace dice and damage style
 - OK config: hide unwanted things
 - OK chat: show reveal detail status
 - OK ez ui: exploration actions

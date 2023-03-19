@@ -593,7 +593,6 @@ export default class ExtraTalesEzUi extends Application {
             }))
         }
 
-
         // data.macros = await game.packs.get("pf2e.action-macros").getDocuments();
         data.macros = [];
         
@@ -602,8 +601,6 @@ export default class ExtraTalesEzUi extends Application {
         let activities = pack.filter(i => i.system.traits.value.includes('exploration') && i.system.source.value == "Pathfinder Core Rulebook")
 
         data.activities = activities;
-
-       
 
         data.actions = this._actions;
 
@@ -673,7 +670,7 @@ export default class ExtraTalesEzUi extends Application {
 
                 let obj = a.items.get(spell);
                 let msg = await obj.toMessage(undefined, { create: false })
-                let content = await TextEditor.enrichHTML(msg.content)
+                let content = await TextEditor.enrichHTML(msg.content, {async: true})
                 content += `<div data-cast style="padding:1em;background:#fff2;display:inline-block;text-transform:uppercase"><span class="hover-gold">Cast Spell (${lvltext})</span></div>`
                 content += ` <div data-counter style="padding:1em;background:#fff2;display:inline-block;text-transform:uppercase"><span class="hover-gold">Counteract</span></div>`
                 content += ` <div data-chat style="padding:1em;background:#fff2;display:inline-block;text-transform:uppercase"><span class="hover-gold">Send to Chat</span></div>`
@@ -715,9 +712,9 @@ export default class ExtraTalesEzUi extends Application {
                 let msg = await obj.toMessage(undefined, { create: false })
                 // REALLY WEIRD WORK AROUND BECAUSE OF PF2E SYSTEM BUG
                 // WITH @CHECK NOT RESOLVING 
-                let msgcontent = await TextEditor.enrichHTML(msg.content);
+                let msgcontent = await TextEditor.enrichHTML(msg.content, {async: true});
                 let $content = $(msgcontent);
-                let content = await TextEditor.enrichHTML(obj.description, { rollData: obj.getRollData(), async: true });
+                let content = await TextEditor.enrichHTML(obj.description, { rollData: obj.getRollData(), async:true });
                 $content.find('.card-content').html(content);
                 content = $content[0].outerHTML;
                 content += `<div data-chat style="padding:1em;background:#fff2;display:inline-block;text-transform:uppercase"><span class="hover-gold">Send to Chat</span></div>`
@@ -852,7 +849,7 @@ export default class ExtraTalesEzUi extends Application {
                     msg = await obj.item.toMessage(undefined, { create: false });
                 
 
-                let content = await TextEditor.enrichHTML(msg.content);
+                let content = await TextEditor.enrichHTML(msg.content, {async: true});
 
                 if (obj.weapon) {
                     content += `<div style="text-transform:uppercase">${obj.weapon.type} +${obj.totalModifier}</div>`
@@ -904,7 +901,7 @@ export default class ExtraTalesEzUi extends Application {
                 let activities = pack.filter(i => i.system.traits.value.includes('exploration'))
                 let obj = activities.find(i => i.id == activity)
 
-                let content = await TextEditor.enrichHTML(obj.system.description.value);
+                let content = await TextEditor.enrichHTML(obj.system.description.value, {async: true});
                 instance.content(content)
 
             },
@@ -1072,10 +1069,10 @@ export default class ExtraTalesEzUi extends Application {
 
                 let user = game.users.find(i => i.character?.id == actor);
 
-                let content = `<textarea></textarea>`
+                let content = `<textarea style="min-height:20em" autofocus></textarea>`
                 let whisper = "";
                 new Dialog({
-                    title: "Send Message",
+                    title: `Send Info (${a.name})`,
                     content: content,
                     render: html => {
                         html.on('input', 'textarea', (ev) => {
@@ -1089,7 +1086,7 @@ export default class ExtraTalesEzUi extends Application {
                                 ChatMessage.create(
                                     {
                                         flavor: "",
-                                        speaker: { alias: "Info" },
+                                        speaker: { alias: `Info (${a.name})` },
                                         flags: {
                                             "core.canPopout": true,
                                         },
@@ -1172,53 +1169,55 @@ export default class ExtraTalesEzUi extends Application {
                 }
             }
 
-            if (action == "combatprev") {
-                if (!game.user.isGM) return;
-                game.combat.previousTurn();
-            }
+            if (game.combat) {
+                if (action == "combatprev") {
+                    if (!game.user.isGM) return;
+                    game.combat.previousTurn();
+                }
 
-            if (action == "combatnext") {
-                if (!game.user.isGM) return;
-                game.combat.nextTurn();
-            }
+                if (action == "combatnext") {
+                    if (!game.user.isGM) return;
+                    game.combat.nextTurn();
+                }
 
-            if (action == "combatstart") {
-                if (!game.user.isGM) return;
-                game.combat.startCombat();
-            }
+                if (action == "combatstart") {
+                    if (!game.user.isGM) return;
+                    game.combat.startCombat();
+                }
 
-            if (action == "combatend") {
-                if (!game.user.isGM) return;
-                game.combat.endCombat();
-            }
+                if (action == "combatend") {
+                    if (!game.user.isGM) return;
+                    game.combat.endCombat();
+                }
 
-            if (action == "configure") {
-                new ExtraTalesConfigure().render(true);
-            }
+                if (action == "configure") {
+                    new ExtraTalesConfigure().render(true);
+                }
 
-            let esc = parseInt(game.combat.getFlag("pf2e-extraordinary-tales", "escalation") ?? 0)
-            if (action == "escup") {
-                if (!game.user.isGM) return;
-                game.combat.setFlag("pf2e-extraordinary-tales", "escalation", esc + 1)
+                let esc = parseInt(game.combat.getFlag("pf2e-extraordinary-tales", "escalation") ?? 0)
+                if (action == "escup") {
+                    if (!game.user.isGM) return;
+                    game.combat.setFlag("pf2e-extraordinary-tales", "escalation", esc + 1)
 
-                ChatMessage.create( {
-                    content: `Escalation (${esc}) <i class="fa-solid fa-arrow-right"></i> (${esc + 1})`
-                })
-            }
+                    ChatMessage.create( {
+                        content: `Escalation (${esc}) <i class="fa-solid fa-arrow-right"></i> (${esc + 1})`
+                    })
+                }
 
-            if (action == "escdown") {
-                if (!game.user.isGM) return;
-                game.combat.setFlag("pf2e-extraordinary-tales", "escalation", esc - 1)
+                if (action == "escdown") {
+                    if (!game.user.isGM) return;
+                    game.combat.setFlag("pf2e-extraordinary-tales", "escalation", esc - 1)
 
-                ChatMessage.create( {
-                    content: `Escalation (${esc}) <i class="fa-solid fa-arrow-right"></i> (${esc - 1})`
-                })
-            }
+                    ChatMessage.create( {
+                        content: `Escalation (${esc}) <i class="fa-solid fa-arrow-right"></i> (${esc - 1})`
+                    })
+                }
 
-            if (action == "esczero") {
-                if (!game.user.isGM) return;
+                if (action == "esczero") {
+                    if (!game.user.isGM) return;
 
-                game.combat.setFlag("pf2e-extraordinary-tales", "escalation", 0)
+                    game.combat.setFlag("pf2e-extraordinary-tales", "escalation", 0)
+                }
             }
 
             if (action == "exploration") {
@@ -1277,7 +1276,7 @@ export default class ExtraTalesEzUi extends Application {
                                 let obj = activities.find(i => i.id == item )
                                 // let msg = await obj.toMessage(null, { create: false })
                                 // let content = TextEditor.enrichHTML(msg.content);
-                                let content = await TextEditor.enrichHTML(obj.system.description.value);
+                                let content = await TextEditor.enrichHTML(obj.system.description.value, {async: true});
                                 instance.content(content)
                             },
                             contentAsHTML: true,

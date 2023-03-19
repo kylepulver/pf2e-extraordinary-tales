@@ -19,7 +19,7 @@ export default class ExtraTalesAid extends FormApplication {
 
         data.isGM = game.user.isGM;
 
-        data.characters = game.actors.filter(a => a.type == 'character');
+        data.characters = game.users.filter(u => u.character).map(u => u.character);
 
         data.aid = this.object.getFlag('pf2e-extraordinary-tales','aid') ?? false;
         if (data.aid === false) {

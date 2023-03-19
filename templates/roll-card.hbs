@@ -2,27 +2,77 @@
     {{#unless isDamageRoll}}
         {{#each rolls}}
             <div style="display:flex;align-items:center;line-height:1">
+                <div style="background:#fff4;font-size:200%;width:1.25em;overflow:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em" data-info>
+                    {{total}}
+                </div>
+
                 {{#if ../isReroll}}
-                <div style="font-size:150%;width:1.25em;overflow-x:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em" data-tooltip="Rerolled">
+                <div style="padding:0 2px" data-tooltip="Rerolled">
                     <i class="fa-solid fa-sync-alt"></i>
                 </div>
                 {{/if}}
 
-                <div style="font-size:200%;width:1.25em;overflow-x:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em">
-                    {{total}}
-                </div>
-
                 {{#each dice as |dice|}}
-                <div>
+                <div data-dice-style style="
+                {{#if (eq this.faces 20)}}
+                {{#if (eq this.total 20)}}
+                padding:0 2px;color:#fff;background:#0ad;outline:2px #0ad8 solid;font-weight:bold;text-shadow:1px 1px 0 #000
+                {{/if}}
+                {{#if (eq this.total 1)}}
+                padding:0 2px;color:#fff;background:#d04;outline:2px #d048 solid;font-weight:bold;text-shadow:1px 1px 0 #000
+                {{/if}}
+                {{/if}}
+                ">
                     <div style="font-size:75%;opacity:0.75;text-align:center;background:#0002">
                         {{dice.formula}} 
                     </div>
-                    <div style="text-align:center;margin-top:-0.1em">
+                    <div style="text-align:center;margin-top:-0.2em">
                     {{#each dice.results}}
-                        <span style="{{#if this.active}}font-size:120%;{{else}}text-decoration: line-through;opacity:0.25;{{/if}}">{{this.result}}</span>
+                        <span style="{{#if this.active}}font-size:120%;{{else}}text-decoration: line-through;opacity:0.25;{{/if}}" data-info>{{this.result}}</span>
                     {{/each}}
                     </div>
                 </div>
+                {{/each}}
+
+                {{#each @root.flags.pf2e.modifiers}}
+                {{#if modifier}}
+                {{#if enabled}}
+                <div style="padding: 0 2px;{{#if ignored}}opacity:0.25{{/if}}">
+                    <div style="font-size:75%;opacity:0.75;text-align:center;text-transform:uppercase;background:#0002;padding:0 1px" data-tooltip="{{label}} ({{type}} {{kind}})">
+                        {{#if ability}}
+                        {{ability}}
+                        {{else if (eq label "Trained") }}
+                        (T)
+                        {{else if (eq label "Expert") }}
+                        (E)
+                        {{else if (eq label "Master") }}
+                        (M)
+                        {{else if (eq label "Legendary") }}
+                        (L)
+                        {{else if (eq type "proficiency") }}
+                        Prof
+                        {{else if (eq label "Escalation") }}
+                        Esc
+                        {{else if (eq label "Multiple Attack Penalty")}}
+                        MAP
+                        {{else if (eq kind "modifier")}}
+                        Mod
+                        {{else if (eq type "circumstance")}}
+                        Circ
+                        {{else if (eq type "status")}}
+                        Stat
+                        {{else if (eq type "untyped")}}
+                        {{kind}}
+                        {{else}}
+                        {{type}}
+                        {{/if}}
+                    </div>
+                    <div style="text-align:center;margin-top:-0.1em">
+                        <span style="font-size:120%;">{{modifier}}</span>
+                    </div>
+                </div>
+                {{/if}}
+                {{/if}}
                 {{/each}}
             </div>
         {{/each}}
@@ -35,13 +85,14 @@
             {{#each instances as |instance|}}
             <div class="damagetype {{instance.type}}" style="line-height:1;text-transform:uppercase;letter-spacing:-0.025em;padding:1px 0">
                 <div style="display:flex;gap:2px;align-items:center">
-                    <div style="font-size:200%;width:1.25em;overflow-x:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em">
+                    <div style="background:#fff4;font-size:200%;width:1.25em;overflow:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em">
                         {{#if instance.total}}
                         {{instance.total}}
                         {{else}}
                         <i style="opacity:0.25" class="fa-solid fa-{{instance.iconClass}} icon"></i>
                         {{/if}}
                     </div>
+
 
                     {{#if instance.total}}
                     <div>
@@ -67,7 +118,19 @@
                             </div>
                         {{/each}}
                         </div>
+
+                        {{#if (dmg_component instance "precision")}}
+                        <div style="font-size:80%;opacity:0.75">
+                        <i class="fa-solid fa-fw icon fa-crosshairs"></i> <span>{{dmg_component instance "precision"}} Precision</span>
+                        </div>
+                        {{/if}}
+                        {{#if (dmg_component instance "splash")}}
+                        <div style="font-size:80%;opacity:0.75">
+                        <i class="fa-solid fa-fw icon fa-burst"></i> <span>{{dmg_component instance "splash"}} Splash</span>
+                        </div>
+                        {{/if}}
                     </div>
+
                     {{else}}
                     <div style="opacity:0.8">
                         {{instance.formula}}
@@ -76,6 +139,7 @@
                 </div>
             </div>
             {{/each}}
+
             {{#if (gt instances.length 1)}}
                 <div style="display:flex;align-items:center;gap:0.25em;justify-content:center;line-height:1">
                 <div style="font-size:200%;letter-spacing:-0.05em">
@@ -86,11 +150,14 @@
                 </div>
                 </div>
             {{/if}}
+            <div>
+                {{!-- {{scuff_dmg this}} Scuff Damage --}}
+            </div>
 
         {{else}}
     
         <div style="display:flex;align-items:center;line-height:1">
-            <div style="font-size:200%;width:1.25em;overflow-x:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em">
+            <div style="font-size:200%;width:1.25em;overflow:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em"  data-info>
                 {{total}}
             </div>
 
@@ -101,7 +168,7 @@
                 </div>
                 <div style="text-align:center;margin-top:-0.1em">
                     {{#each dice.results}}
-                        <span style="{{#if this.active}}font-size:120%;{{else}}text-decoration: line-through;opacity:0.25;{{/if}}">{{this.result}}</span>
+                        <span style="{{#if this.active}}font-size:120%;{{else}}text-decoration: line-through;opacity:0.25;{{/if}}" data-info>{{this.result}}</span>
                     {{/each}}
                 </div>
             </div>

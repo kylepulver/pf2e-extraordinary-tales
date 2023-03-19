@@ -1,3 +1,15 @@
+.hover-reveal-container .hover-reveal {
+    display:none;
+}
+
+.hover-reveal-container:hover .hover-reveal {
+    display:initial;
+}
+.hover-reveal:hover {
+    opacity: 1.0 !important;
+}
+
+
 .pf2e-extraordinary-tales .test {
     color: red;
 }
@@ -116,6 +128,29 @@ div.hover-gold > div:hover,span.hover-gold:hover {
     box-shadow: none !important;
     border-radius: 0 !important;
 }
+.dorako-ui #chat-controls {
+    margin: 0 !important;
+    gap: 0 !important;
+}
+#chat-controls {
+    margin: 0 !important;
+}
+#chat-log {
+    margin-left: 0 !important;
+}
+textarea {
+    padding: 1px !important;
+}
+#chat-form textarea {
+    border: 0 !important;
+    border-radius: 0 !important;
+}
+#chat-form {
+    margin: 0 !important;
+}
+section.chat-sidebar {
+    gap: 0 !important;
+}
 .dorako-ui .message-header.light-header-text .header-meta {
     background: 0 !important;
     border: 0 !important;
@@ -137,6 +172,9 @@ div.hover-gold > div:hover,span.hover-gold:hover {
     /* scrollbar-color: initial transparent !important; */
     
 }
+.card-content p, .roll-note, .roll-note * {
+    user-select:text !important;
+}
 .dorako-ui.message.chat-message .message-content .pf2e.chat-card .tags {
     margin: 0 !important;
 }
@@ -145,6 +183,11 @@ div.hover-gold > div:hover,span.hover-gold:hover {
     margin-right: 1px !important;
     box-shadow: none !important;
 
+}
+.dorako-ui.message.chat-message.blind,
+.dorako-ui.message.chat-message.whisper {
+    background-color: initial !important;
+    background-blend-mode: initial !important;
 }
 .dorako-ui.message.chat-message .message-content .pf2e.chat-card .card-header h3.pf2-icon {
     font-size: 1.75rem !important;
@@ -170,7 +213,8 @@ div.hover-gold > div:hover,span.hover-gold:hover {
 }
 p.compact-text, section.roll-note {
     margin: 0 !important;
-    line-height: 1.1 !important;
+    line-height: 1.15 !important;
+    font-size: 90%;
 }
 .app.sheet.actor p, .pf2e p {
     font-weight: normal !important;
@@ -223,6 +267,17 @@ i[data-pf2-repost]:hover {
     box-shadow: 0 !important;
     border-radius: 0 !important;
 }
+.chat-message button {
+    line-height:inherit!important;
+}
+table {
+    margin: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+}
+table td, table th {
+    padding: 0 !important;
+}
 /* a.content-link, [data-pf2-check], a.entity-link, [data-pf2-action], [data-pf2-effect-area], a.inline-roll:not(.inline-result),.pf2-icon, .pf2e.sheet form span.pf2-icon, .pf2e.sheet form span[data-pf2-action], .pf2e.sheet form span[data-pf2-action] *, .pf2e.sheet form span[data-pf2-check], .pf2e.sheet form span[data-pf2-check] * {
     color: inherit !important;
     background: #0001 !important;
@@ -231,6 +286,9 @@ i[data-pf2-repost]:hover {
     outline: 0.25em solid #0084 !important; 
     border-radius: 0 !important;
 } */
+.chat-message .message-content .damage-taken .persistent {
+    margin-top:0!important;
+}
 .dorako-ui .message-header .player-name, .dorako-ui .message-header .message-sender {
     max-width: 140px !important;
     letter-spacing: -0.05em;
@@ -251,6 +309,8 @@ i[data-pf2-repost]:hover {
 .chat-message .flavor-text h4.action {
     line-height: 1 !important;
     font-size: 120%;
+    padding-left:0.15em;
+    padding-top:0.15em;
     font-variant: small-caps;
 }
 .chat-message .message-header {
@@ -281,8 +341,11 @@ i[data-pf2-repost]:hover {
 .dorako-ui.message.chat-message.whisper {
     /* opacity: 0.75 !important; */
     /* filter: brightness(75%) contrast(90%); */
-    border-top: 2px solid black;
-    border-bottom: 2px solid black;
+    /* border-left: 10px solid black; */
+    /* border-bottom: 2px solid black; */
+}
+h1, h2, h3, h4 {
+    margin: 0 !important;
 }
 .dorako-ui .message-header .portrait-and-name .sender-wrapper {
     gap: 0 !important;
@@ -309,12 +372,12 @@ span[data-pf2-effect-area]::before {
 }
 
 #chat-log .message.emote .message-content {
-    padding: 0 2px !important;
-    background: #0008 !important;
+    padding: 0 0.25em !important;
+    background: #444 !important;
     text-align:left !important;
     font-style:normal !important;
     font-size:1em !important;
-    color:#fff !important;
+    color:#eee !important;
     font-weight:400 !important;
 }
 
@@ -350,4 +413,8 @@ span[data-pf2-effect-area]::before {
 }
 .damagetype.force {
     color: #603;
+}
+
+[data-tab="playlists"] {
+    display: none !important;
 }

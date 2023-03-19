@@ -318,7 +318,7 @@
                     <i class="fa-solid fa-person"></i>
                 </div>
                 <div style="flex:0 0 2rem" data-action="extraordinarytales" data-tip="Collateral Uses and XP">
-                    <i class="fa-solid fa-people-group"></i>
+                    <i class="fa-solid fa-people-arrows"></i>
                 </div>
             </div>
             {{#each characters}}
@@ -327,7 +327,7 @@
                 <img style="max-height:1.5rem;max-width:1.5rem" src="{{this.prototypeToken.texture.src}}"/>
             </div>
             <div style="flex:0 0 1.5rem;" data-actor="{{this.id}}" data-action="hitpoints" data-tip="Edit Hit Points">
-                <span class="hover-gold">{{this.attributes.hp.value}}</span>
+                <span class="hover-gold" style="color: #8d8">{{this.attributes.hp.value}}</span>
             </div>
             <div style="flex:0 0 1.25rem" >
                 {{this.attributes.ac.value}}
@@ -351,19 +351,19 @@
                 {{this.system.resources.focus.value}}
             </div>
 
-            <div style="flex:0 0 1.25rem" class="hover-gold" data-action="extraordinarytales">
+            <div style="flex:0 0 1.25rem;color:#dc6" class="hover-gold" data-action="extraordinarytales">
                 <div>{{this.heroPoints.value}}</div>
             </div>
             
             <div style="flex:0 0 2rem" data-action="personalxp" data-actor="{{this.id}}" data-tip="Use Personal Ability">
-                <span class="hover-gold">{{this.flags.pf2e-extraordinary-tales.personaluses}}
+                <span class="hover-gold"  style="color: #f8c">{{this.flags.pf2e-extraordinary-tales.personaluses}}
                 <span style="opacity:0.75;letter-spacing:-0.05em;font-size:90%">
                 {{this.flags.pf2e-extraordinary-tales.personalxp}}
                 </span>
                 </span>
             </div>
             <div style="flex:0 0 2rem" data-action="collateralxp" data-actor="{{this.id}}" data-tip="Use Collateral Ability">
-                <span class="hover-gold">{{this.flags.pf2e-extraordinary-tales.collateraluses}}
+                <span class="hover-gold" style="color: #0cf">{{this.flags.pf2e-extraordinary-tales.collateraluses}}
                 <span style="opacity:0.75;letter-spacing:-0.05em;font-size:90%">
                 {{this.flags.pf2e-extraordinary-tales.collateralxp}}
                 </span></span>
@@ -372,10 +372,10 @@
             <div data-actor="{{this.id}}" style="padding-left:2em;text-transform:uppercase;font-size:75%;letter-spacing:-0.05em" data-action="exploration" data-tip="Edit Exploration Activity">
                 <span class="hover-gold">
                 {{#if this.flags.pf2e-extraordinary-tales.exploration-status}}
-               {{this.flags.pf2e-extraordinary-tales.exploration-status}}
-               {{else}}
-               Exploration
-               {{/if}}</span>
+                {{this.flags.pf2e-extraordinary-tales.exploration-status}}
+                {{else}}
+                Exploration
+                {{/if}}</span>
             </div>
             {{/each}}
         </div>

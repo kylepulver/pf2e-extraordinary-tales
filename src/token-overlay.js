@@ -89,7 +89,7 @@ export default class ExtraTalesTokenOverlay extends BasePlaceableHUD {
                 }
 
 
-                if (this.object.data.disposition == 1) {
+                if (this.object.document.disposition == 1) {
                     data.show.estimate = true;
                     data.show.defense = true;
                 }
@@ -121,25 +121,25 @@ export default class ExtraTalesTokenOverlay extends BasePlaceableHUD {
 
         const getTokenDistance = function (src, t) {
             let ray, segments;
-            let unit = game.scenes.get(game.user.viewedScene).data.gridUnits;
-            let type = game.scenes.get(game.user.viewedScene).data.gridType;
-            let elevation = src?.data?.elevation ?? 0;
+            let unit = game.scenes.get(game.user.viewedScene).grid.units;
+            let type = game.scenes.get(game.user.viewedScene).grid.type;
+            let elevation = src?.document?.elevation ?? 0;
             let dist = Infinity;
 
             if (type == 0) {
                 return "";
             }
 
-            for (let tw = 0; tw < t.data.width; tw++) {
-                for (let th = 0; th < t.data.height; th++) {
+            for (let tw = 0; tw < t.document.width; tw++) {
+                for (let th = 0; th < t.document.height; th++) {
                     let pos = {
                         x: t.x + tw * canvas.grid.size,
                         y: t.y + th * canvas.grid.size,
                     };
 
                     // need to account for src size as well!!
-                    for (let tws = 0; tws < src.data.width; tws++) {
-                        for (let ths = 0; ths < src.data.height; ths++) {
+                    for (let tws = 0; tws < src.document.width; tws++) {
+                        for (let ths = 0; ths < src.document.height; ths++) {
                             let srcpos = {
                                 x: src.x + tws * canvas.grid.size,
                                 y: src.y + ths * canvas.grid.size,
@@ -152,14 +152,14 @@ export default class ExtraTalesTokenOverlay extends BasePlaceableHUD {
                 }
             }
 
-            let elevationoffseta = Math.min(src.data.width, src.data.height);
-            let elevationoffsetb = Math.min(t.data.width, t.data.height);
+            let elevationoffseta = Math.min(src.document.width, src.document.height);
+            let elevationoffsetb = Math.min(t.document.width, t.document.height);
             let height = Infinity;
 
             for (let ta = 0; ta < elevationoffseta; ta++) {
                 for (let tb = 0; tb < elevationoffsetb; tb++) {
                     let taelevation = ta * canvas.dimensions.distance + elevation;
-                    let tbelevation = tb * canvas.dimensions.distance + t.data.elevation;
+                    let tbelevation = tb * canvas.dimensions.distance + t.document.elevation;
 
                     let elevationpixelsa = (taelevation / canvas.dimensions.distance) * canvas.grid.size;
                     let elevationpixelsb = (tbelevation / canvas.dimensions.distance) * canvas.grid.size;

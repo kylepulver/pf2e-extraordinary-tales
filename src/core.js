@@ -1,3 +1,5 @@
+import ExtraTalesCollateral from "./applications/collateral.js";
+
 export default class ExtraTalesCore {
     static initialize() {
 
@@ -48,7 +50,19 @@ export default class ExtraTalesCore {
         d.render(true);
     }
 
+    static socketCollateral(data) {
+
+    }
+
     static promptCollateralXP(actor) {
+        if (!actor) {
+            actor = game.user.character ?? false;
+        }
+        if (actor === false) {
+            console.log("No actor")
+            return;
+        }
+        // console.log("Prompt Collateral", actor);
         let xpRemaining = parseInt(actor.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0);
 
         if (!xpRemaining) {
@@ -71,15 +85,20 @@ export default class ExtraTalesCore {
                 one: {
                     icon: '<i class="fas fa-check"></i>',
                     label: `Use Collateral Ability`,
-                    callback: () => {
+                    callback: async () => {
                         actor.setFlag('pf2e-extraordinary-tales', 'collateralready', true)
                         new ExtraTalesCollateral(actor).render(true);
+                        ExtraTalesCore.socket.executeForUsers(
+                            ExtraTalesCore.promptCollateralXP,
+                            game.users.filter(u => u.character && !u.isSelf && !u.character?.getFlag("pf2e-extraordinary-tales", "collateralready")).map(u => u.id)
+                            )
                         // execute the function for every other user
-                        for(let u of game.users) {
-                            if (u.isGM) continue;
-                            if (u.isSelf) continue;
-                            ExtraTalesCore.socket.executeAsUser(ExtraTalesCore.promptCollateralXP, u.id, u.character);
-                        }
+                        // for(let u of game.users) {
+                        //     if (u.isGM) continue;
+                        //     if (u.isSelf) continue;
+                        //     if (!u.character) continue;
+                        //     await ExtraTalesCore.socket.executeAsUser(ExtraTalesCore.promptCollateralXP, u.id, u.character);
+                        // }
                     }
                 },
                 two: {
@@ -120,7 +139,7 @@ export default class ExtraTalesCore {
         actor.setFlag('pf2e-extraordinary-tales', 'collateralxp', colxpto)
 
         ChatMessage.create({
-            content: `<strong>${actor.name}</strong> uses Personal XP!<br /> Personal XP (${xp}) <i class="fa-solid fa-arrow-right"></i> (${xpto})<br /> Collateral XP (${colxp}) <i class="fa-solid fa-arrow-right"></i> (${colxpto})}`
+            content: `<strong>${actor.name}</strong> uses Personal XP!<br /> Personal XP (${xp}) <i class="fa-solid fa-arrow-right"></i> (${xpto})<br /><span style="opacity:0.6">Collateral XP (${colxp}) <i class="fa-solid fa-arrow-right"></i> (${colxpto})</span>`
         })
         // Math.floor(Math.log(xp) / Math.log(2))
     }
