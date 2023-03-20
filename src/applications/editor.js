@@ -13,7 +13,8 @@ export default class ExtraTalesEditor extends Application {
             classes:["pf2e-extraordinary-tales"],
             template: "modules/pf2e-extraordinary-tales/templates/apps/editor.hbs",
             width: 720,
-            height: "auto"
+            height: "auto",
+            title: "Extraorindary Tales"
         });
     }
 
@@ -30,11 +31,16 @@ export default class ExtraTalesEditor extends Application {
 
         // data.characters = game.actors.filter(a => a.type == 'character');
 
+        
+        
+
         data.personalxp = {}
         data.collateralxp = {};
         data.personaluse = {};
         data.collateraluse = {};
         data.collateralready = {};
+        data.aidrecieved = {}
+        data.aidprovided = {}
         data.heropoints = {};
         data.characters = [];
         for(let u of game.users.values()) {
@@ -68,6 +74,27 @@ export default class ExtraTalesEditor extends Application {
             data.collateralready[c.id] = c.getFlag('pf2e-extraordinary-tales', 'collateralready') ?? false;
             data.heropoints[c.id] = c.system.resources.heroPoints.value ?? 0;
         }
+
+        // for (let c of data.characters) {
+        //     data.aidrecieved[c.id] = game.messages
+        //     // .filter(m => Date.now() - m.timestamp < 1000 * 60 * 60 * 24)
+        //     .filter(m => Date.now() - m.timestamp < 1000 * 60 * 60 * 2400)
+        //     .filter(m => {
+        //         let aid = m.getFlag("pf2e-extraordinary-tales", "aid") ?? {}
+        //         return aid[c.id] ?? false
+        //     })
+        //     .map(m => game.users.get(m.user)?.character?.id ?? "error")
+
+        //     data.aidprovided[c.id] = game.messages
+        //     .filter(m => Date.now() - m.timestamp < 1000 * 60 * 60 * 24)
+        //     .filter(m => m.user == game.users.find(u => u.character.id == c.id))
+        //     .map(m => {
+        //         let aid = m.getFlag("pf2e-extraordinary-tales", "aid") ?? {}
+        //         return Object.keys(aid);
+        //     })
+        // }
+        
+        // console.log(data.aidrecieved, data.aidprovided)
 
         // console.log(data);
 

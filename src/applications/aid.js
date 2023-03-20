@@ -10,7 +10,8 @@ export default class ExtraTalesAid extends FormApplication {
             classes:["pf2e-extraordinary-tales"],
             template: "modules/pf2e-extraordinary-tales/templates/apps/aid.hbs",
             width: 300,
-            height: "auto"
+            height: "auto",
+            title: "Aid Character"
         });
     }
 

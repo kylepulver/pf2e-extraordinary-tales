@@ -1,19 +1,16 @@
 <form>
     <h1>Aid Character</h1>
 
-    
-
     {{#each characters}}
-    <div class="form-group">
-        <div   style="flex: 0 0 2em">
+    <div class="form-group" style="align-items:center;gap:0.25em">
         <input type="checkbox" name="{{this.id}}" {{checked (lookup ../aid this.id)}}> 
-        </div>
+        <img src="{{this.prototypeToken.texture.src}}" style="max-width:1.5em;height:1.5em"/>
         <label>{{this.name}}</label>
     </div>
     {{/each}}
 
     <div class="form-group buttons">
         <button type="submit"><i class="fa-solid fa-check"></i> Save</button>
-        <button type="reset"><i class="fa-solid fa-times"></i> Cancel</button>
+        <button type="close"><i class="fa-solid fa-times"></i> Cancel</button>
     </div>
 </form>

@@ -456,7 +456,7 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
         }
     }
 
-    if (game.user.isGM && obj.isRoll) {
+    if (game.user.isGM ) {
 
         let $content = html.find('.message-content');
         $content.append(`<div class="hover-reveal hover-gold" style="font-size:85%;line-height:1;padding:0.25em;position:absolute;top:-0.75em;right:0.25em;background:#333;color:#ddd;font-weight:bold;border-radius:3px">
@@ -488,20 +488,13 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
 
     let outcome = obj.getFlag('pf2e-extraordinary-tales','outcome') ?? false;
 
-    if (outcome) {
-        let outcometext = "";
-        if (outcome == "s") outcometext = "Success";
-        if (outcome == "cs") outcometext = "Critical Success";
-        if (outcome == "f") outcometext = "Failure";
-        if (outcome == "cf") outcometext = "Critical Success";
-        html.append(`<div style="background:#0002;padding:0.25em;margin:0.25em;text-align:center;font-weight:bold;text-transform:uppercase">${outcometext}</div>`)
-    }
+  
 
     if (!obj.isContentVisible || obj.blind) {
         // html.find('[data-info]').css("outline", "#ccc 2px solid")
         if (!game.user.isGM ) {
-            html.find('[data-info]').html("<span>?</span>")
-            html.find('.inline-roll').after(`<span style="background:#eee;color:#222;outline:#eee 2px solid"><i class="fa-solid fa-dice-d20"></i> ? </span>`)
+            html.find('[data-info]').html(`<span>?</span>`)
+            html.find('.inline-roll').after(`<span style="background:#555;color:#eee;outline:#555 2px solid;"> <i class="fa-solid fa-dice-d20 fa-sm fa-fw"></i>&nbsp; ? &nbsp;</span>`)
             html.find('.inline-roll').remove();
             html.find('[data-dice-style]').removeAttr('style')
         }
@@ -510,10 +503,35 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
         html.find('[data-info]').css("text-shadow", "0 0 3px #000,0 0 3px #000,0 0 3px #000")
         
     }
+    if (obj.isContentVisible || game.user.isGM) {
+        if (outcome) {
+            let outcometext = "";
+            if (outcome == "s") outcometext = "Success";
+            if (outcome == "cs") outcometext = "Critical Success";
+            if (outcome == "f") outcometext = "Failure";
+            if (outcome == "cf") outcometext = "Critical Failure";
+            html.append(`<div style="background:#0002;padding:0.25em;margin:0.25em;text-align:center;font-weight:bold;text-transform:uppercase"><span style="opacity:0.9">${outcometext}</span></div>`)
+
+            html.css("position", "relative");
+            if (outcome == "s") {
+                html.append(`<div style="mix-blend-mode:overlay;inset:0;background:#08da;box-shadow:inset 0 0 20px 5px #0f08, inset 0 0 5px 0 #0f0;z-index:5;position:absolute;pointer-events:none"></div>`)
+            }
+            if (outcome == "cs") {
+                html.append(`<div style="mix-blend-mode:overlay;inset:0;background:#0efd;box-shadow:inset 0 0 20px 5px #00f8, inset 0 0 5px 0 #0ff;z-index:5;position:absolute;pointer-events:none"></div>`)
+            }
+            if (outcome == "f") {
+                html.append(`<div style="mix-blend-mode:multiply;inset:0;background:#2224;box-shadow:inset 0 0 10px 5px #0008, inset 0 0 5px 0 #000;z-index:5;position:absolute;pointer-events:none"></div>`)
+            }
+            if (outcome == "cf") {
+                html.append(`<div style="mix-blend-mode:multiply;inset:0;background:#6106;box-shadow:inset 0 0 20px 5px #400, inset 0 0 5px 0 #800;z-index:5;position:absolute;pointer-events:none"></div>`)
+            }
+        }
+    }
 
     if (!obj.isContentVisible || obj.whisper.length) {
         html.css("position", "relative");
-        html.append(`<div style="inset:0;background:#0003;z-index:10;position:absolute;pointer-events:none"></div>`)
+        html.append(`<div style="inset:0;background:#0002;z-index:7;position:absolute;pointer-events:none"></div>`)
+        html.append(`<div style="inset:0;box-shadow: inset 0 0 12px 2px #8888, inset 0 0 2px 0 #888;z-index:10;position:absolute;pointer-events:none"></div>`)
     }
 
     
@@ -611,11 +629,13 @@ todo:
 - OK separate precision damage
 - OK adjust roll with simple plus or minus
 - OK fix secret rolls speaker info being replaced
+- OK add token to add chat message
+- OK format secret rolls more
+- OK style chat tags
+- OK add token to aid ui
 
-- add token to aid ui
-- add token to add chat message
-- reroll as secret
-- set to public
+- reroll as secret menu item
+- set to public menu item
 
 - calculate scuff damage
 - revise recall knwoledge macro to own thing
@@ -623,18 +643,18 @@ todo:
 
 - editing rolls
 - adjust damage instance with simple plus or minus
+- extra tales: track aid
 
+- roll attack damages from ez ui
 - show "spell" when ability is spell
 - ez ui: spell attack map
 - fix modifiers in skill roll preview
 - add rules text about skill in hover skill ez ui
 - format chat for @Check or whatever
-- format secret rolls more
 - reposition ez ui by dragging
 - more strike info (melee / ranged)
 - chat: type thing from ez ui to roll it
 - hide roll notes by default, click to expand
-- style chat tags
 - ez ui: multiple tokens selected show common elements
 - ez ui: filter content
 - ez ui: headers
@@ -650,13 +670,8 @@ todo:
 - damage: damage editor
 - chat: reminder pins from GM
 - chat: damage application window
-- chat: click to minimize card (hover minimized thing to see chat card)
-- pf2e: heroic harmony effect
-- pf2e: secret check easier
 - sidebar: hover over actors for preview
 - journal: investigate simultaneous editing
-- macros: alternate macro list (disable hotbar)
-- extra tales: track aid
 
 - OK chat: might not need mystify from pf2e workbench
 - OK pf2e: hero point keep the better result
