@@ -103,8 +103,7 @@ Hooks.on("ready", () => {
   
         let rerollhistory = message.getFlag("pf2e-extraordinary-tales", "rerollhistory") ?? [];
 
-        let newroll = await new Roll("d20").roll()
-        await game.dice3d.showForRoll(newroll, message.author, true, null, message.blind, message.id, message.speaker);
+        let newroll = await new Roll("d20").roll({async: true})
         let roll = message.rolls[0];
         let die = roll.dice[0];
         die.results.push(newroll.dice[0].results[0]);
@@ -113,7 +112,9 @@ Hooks.on("ready", () => {
 
         let r0 = die.results[die.results.length - 2]
         let r1 = die.results[die.results.length - 1]
+
         if (keep == "new") {
+            r1.active = true;
         }
         if (keep == "best") {
             r1.active = r1.result > r0.result;
@@ -131,7 +132,7 @@ Hooks.on("ready", () => {
                         "system.resources.heroPoints.value": Math.clamped(heroPointCount - 1, 0, 3),
                     });
                     ChatMessage.create({
-                        content: `<strong>${actor.name}</strong> uses a Hero Point to reroll!<br /><i class="fa-solid fa-star"></i> Hero Points (${heroPointCount}) <i class="fa-solid fa-arrow-right"></i> (${heroPointCount - 1})`
+                        content: `<i class="fa-solid fa-star"></i> Hero Points (${heroPointCount}) <i class="fa-solid fa-arrow-right"></i> (${heroPointCount - 1})`
                     })
                 } else {
                     ui.notifications.warn(game.i18n.format("PF2E.RerollMenu.WarnNoHeroPoint", { name: actor.name }));
@@ -143,9 +144,21 @@ Hooks.on("ready", () => {
             }
         }
 
+        // console.log(message.rolls);
+
         roll._total = roll._evaluateTotal();
-        await message.setFlag("pf2e", "context.isReroll", true);
+        // await game.dice3d.renderRolls(message, [newroll])
+        console.log(message);
+        game.dice3d.showForRoll(newroll, message.user, true, null, false, message.id, message.speaker);
+        // await game.dice3d.waitFor3DAnimationByMessageID(message.id);
         await message.update({"rolls": duplicate(message.rolls)})
+        await message.setFlag("pf2e", "context.isReroll", true);
+        // await message.render();
+    }
+
+    if (game.user.character) {
+        game.user.character.setFlag('pf2e-extraordinary-tales', 'personaluses', ExtraTalesCore.getUsagesFromXP(parseInt(game.user.character.getFlag('pf2e-extraordinary-tales', 'personalxp') ?? 0)))
+        game.user.character.setFlag('pf2e-extraordinary-tales', 'collateraluses', ExtraTalesCore.getUsagesFromXP(parseInt(game.user.character.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0)))
     }
 
     new ExtraTalesEzUi().render(true);
@@ -227,6 +240,13 @@ Hooks.on('getChatLogPF2eEntryContext', (obj, items) => {
     return items;
 })
 
+Hooks.on('renderCheckModifiersDialog', (app, html, data) => {
+    html.find(".roll-mode-panel option[value=publicroll]").text("Public Roll to All");
+    html.find(".roll-mode-panel option[value=gmroll]").text("Public Roll to Self and GM");
+    html.find(".roll-mode-panel option[value=selfroll]").text("Test Roll to Self Only");
+    html.find(".roll-mode-panel option[value=blindroll]").text("Secret Roll to GM");
+})
+
 Hooks.on('renderChatLogPF2e', (app, html, data) => {
     $(".roll-type-select option[value=publicroll]").text("Public Roll to All");
     $(".roll-type-select option[value=gmroll]").text("Public Roll to Self and GM");
@@ -291,6 +311,16 @@ Hooks.on('renderChatLogPF2e', (app, html, data) => {
 
 Hooks.on('chatMessage', (obj, message, data) => {
     let cancel = false;
+
+    // todo: if GM, dont speak as PC ever
+
+    let speaker = ChatMessage.getSpeaker();
+
+    if (speaker.actor) {
+
+    }
+
+    
 
     try {
         if (Roll.validate(message)) {
@@ -361,7 +391,7 @@ Hooks.on("hoverMeasuredTemplate", (t, hovered) => {
 });
 
 Hooks.on("updateToken", (a, b, c, d) => {
-    console.log("=== update token", a, b, c, d)
+    // console.log("=== update token", a, b, c, d)
     if (a.overlayEffect) {
         a.update({overlayEffect: ""})
     }
@@ -371,6 +401,7 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
 
     let actor = obj.token?.actor ?? obj.actor ?? false;
 
+    if (game.user.isGM)
     console.log(obj)
 
     
@@ -609,30 +640,21 @@ Hooks.on('renderCombatTracker', (app, html, data) => {
 
 
 /*
+thoughts:
+scuff damage:
+use the chat message data "_strike" "_strike.item"
+npc use ability score for damage + damage dice count
+hefty: use base damage
+wimpy: use ability score
 
 todo:
+- reroll not showing
+- prevent attack roll without target
+- test sequencer video
+- include scuff damage on attack rolls
+- format chat card with single check
+- EH recall knwoledge bug 
 
-- OK collateral prompt fixed
-- OK too many modifiers were showing
-- OK make GM whispers more obvious
-- OK fix token hover errors
-- OK put HP back into token overlay
-- OK style footer aid and other stuff
-- OK chat: apply CF, F, S, CS effects from GM
-- OK rename dropdown roll modes menu
-- OK send GM secret message button
-- OK token overlay: status icons
-- OK fix climb icon
-- OK reveal chat cards to specific players
-- OK remove giant skull from dead condition
-- OK fix hero point reroll not showing 3d dice for all players
-- OK separate precision damage
-- OK adjust roll with simple plus or minus
-- OK fix secret rolls speaker info being replaced
-- OK add token to add chat message
-- OK format secret rolls more
-- OK style chat tags
-- OK add token to aid ui
 
 - reroll as secret menu item
 - set to public menu item
@@ -672,6 +694,28 @@ todo:
 - chat: damage application window
 - sidebar: hover over actors for preview
 - journal: investigate simultaneous editing
+
+- OK collateral prompt fixed
+- OK too many modifiers were showing
+- OK make GM whispers more obvious
+- OK fix token hover errors
+- OK put HP back into token overlay
+- OK style footer aid and other stuff
+- OK chat: apply CF, F, S, CS effects from GM
+- OK rename dropdown roll modes menu
+- OK send GM secret message button
+- OK token overlay: status icons
+- OK fix climb icon
+- OK reveal chat cards to specific players
+- OK remove giant skull from dead condition
+- OK fix hero point reroll not showing 3d dice for all players
+- OK separate precision damage
+- OK adjust roll with simple plus or minus
+- OK fix secret rolls speaker info being replaced
+- OK add token to add chat message
+- OK format secret rolls more
+- OK style chat tags
+- OK add token to aid ui
 
 - OK chat: might not need mystify from pf2e workbench
 - OK pf2e: hero point keep the better result

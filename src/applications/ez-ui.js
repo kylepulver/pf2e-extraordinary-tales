@@ -614,6 +614,34 @@ export default class ExtraTalesEzUi extends Application {
     activateListeners(html) {
         let self = this;
 
+        const checkTarget = (callback) => {
+            if (!game.user.targets.toObject().length) {
+                new Dialog({
+                    title: `No Targets`,
+                    content: `<div style="text-align:center;font-size:200%">No tokens targeted.</div><div>Target at least one token, or continue without targets.</div>`,
+                    render: html => {
+                    },
+                    buttons: {
+                        button1: {
+                            label: "Continue",
+                            callback: () => {
+                                callback();
+                            },
+                            icon: `<i class="fas fa-check"></i>`
+                            },
+                        button2: {
+                            label: "Cancel",
+                            callback: () => { },
+                            icon: `<i class="fas fa-times"></i>`
+                        }
+                    }
+                }).render(true);
+            }
+            else {
+                callback();
+            }
+        }
+
         html.on("click", "[data-combatant]", (ev) => {
             let combatant = game.combat.combatants.get(ev.currentTarget.dataset.combatant);
             let token = combatant.token?.object;
@@ -799,27 +827,29 @@ export default class ExtraTalesEzUi extends Application {
                 instance.content(content);
             },
             functionReady: async(instance, helper) => {
+                
                 $(helper.tooltip).on('click', '[data-attack]', (ev) => {
-                    instance.obj.statistic.check.roll();
+                    checkTarget(() => {instance.obj.statistic.check.roll()})
                 });
                 $(helper.tooltip).on('click', '[data-attack-two]', (ev) => {
-                    let c = instance.obj.statistic.check.clone();
-                    c.modifiers.push(new game.pf2e.Modifier({
-                        label: "Multiple Attack Penalty",
-                        modifier: -5
-                    }))
-                    c.statistic.check.roll([new game.pf2e.Modifier({
-                        label: "Multiple Attack Penalty",
-                        modifier: -5
-                    })]);
+                
+                    checkTarget(() => {instance.obj.statistic.check.roll({ attackNumber: 2})})
+                    // let c = instance.obj.statistic.check.clone();
+                    // c.modifiers.push(new game.pf2e.Modifier({
+                    //     label: "Multiple Attack Penalty",
+                    //     modifier: -5
+                    // }))
+                    // c.statistic.check.roll([new game.pf2e.Modifier({
+                    //     label: "Multiple Attack Penalty",
+                    //     modifier: -5
+                    // })]);
                 });
                 $(helper.tooltip).on('click', '[data-attack-three]', (ev) => {
-                    instance.obj.statistic.check.modifiers.push(new game.pf2e.Modifier({
-                        label: "Multiple Attack Penalty",
-                        modifier: -10
-                    }))
-                    instance.obj.statistic.check.roll();
+             
+                    checkTarget(() => {instance.obj.statistic.check.roll({ attackNumber: 3})})
                 });
+
+             
             },
             contentAsHTML: true,
             delay: 200,
@@ -875,7 +905,9 @@ export default class ExtraTalesEzUi extends Application {
             functionReady: async(instance, helper) => {
                 $(helper.tooltip).on('click', '[data-act]', (ev) => {
                     let idx = ev.currentTarget.dataset.act;
-                    instance.obj.variants[idx].roll();
+
+                    checkTarget(() => instance.obj.variants[idx].roll())
+                    
                 });
             },
             contentAsHTML: true,
@@ -950,7 +982,7 @@ export default class ExtraTalesEzUi extends Application {
             let pack = game.packs.get('pf2e.actionspf2e');
             await pack.getDocuments();
             let activities = pack.filter(i => i.system.traits.value.includes('exploration'))
-            console.log(activities);
+  
 
             let obj = activities.find(i => i.id == activity)
 
@@ -1004,11 +1036,10 @@ export default class ExtraTalesEzUi extends Application {
             let token = ev.currentTarget.dataset.token;
             let t = canvas.scene.tokens.get(token) ?? {};
             let a = t.actor ?? game.actors.get(actor)
-
             // let obj = a.system.actions.find(i => i.label == act);
             let obj = a.system.actions[act]
-          
-            obj.roll();
+            checkTarget(() => obj.roll());
+           
         });
 
         html.on('click', '[data-key]', (ev) => {
@@ -1021,7 +1052,7 @@ export default class ExtraTalesEzUi extends Application {
 
             console.log(foundry.utils.getProperty(a, key));
             let obj = foundry.utils.getProperty(a, key);
-            obj.roll();
+            obj.roll({});
         })
 
         html.on('click', '[data-action]', async (ev) => {
@@ -1056,8 +1087,8 @@ export default class ExtraTalesEzUi extends Application {
             }
 
             if (action == "recallknowledge") {
-                game.packs.get("xdy-pf2e-workbench.asymonous-benefactor-macros-internal").getDocuments().then((documents) => {
-                    let m = documents.find(i => i.name == "XDY DO_NOT_IMPORT Recall_Knowledge")
+                game.packs.get("world.extraordinary-tales-macros").getDocuments().then((documents) => {
+                    let m = documents.find(i => i.name == "Recall Knowledge Ex")
                     m.execute();
                 })
             }
@@ -1121,12 +1152,12 @@ export default class ExtraTalesEzUi extends Application {
             if (action == "hitpoints") {
                 if (!(game.user.isGM || actor == (game.user.character?.id ?? false) )) return;
 
-                let content = `<h2>Hit Points</h2><div class="flexrow" style="align-items:center;gap:1em"><div style="text-align:right">Total</div><input data-target="value" type="number"><div style="text-align:right">Modify</div><input data-target="valuemod" type="number"></div><h2>Temporary</h2><div class="flexrow" style="align-items:center;gap:1em"><div style="text-align:right">Total</div><input data-target="temp" type="number"><div style="text-align:right">Modify</div><input data-target="tempmod" type="number"></div><div style="height:4px"></div>`
+                let content = `<h3>Hit Points</h3><div class="flexrow" style="align-items:center;gap:1em"><div style="text-align:right">Total</div><input data-target="value" type="number"><div style="text-align:right">Modify</div><input data-target="valuemod" type="number"></div><h3>Temporary</h3><div class="flexrow" style="align-items:center;gap:1em"><div style="text-align:right">Total</div><input data-target="temp" type="number"><div style="text-align:right">Modify</div><input data-target="tempmod" type="number"></div><div style="height:4px"></div>`
                 let hp = {};
-                hp.value = a.attributes.hp.value,
-                hp.valuemod = "",
-                hp.temp = a.attributes.hp.temp,
-                hp.tempmod = ""
+                hp.value = a.attributes.hp.value;
+                hp.valuemod = "";
+                hp.temp = a.attributes.hp.temp;
+                hp.tempmod = "";
 
                 new Dialog({
                     title: "Change Hit Points",

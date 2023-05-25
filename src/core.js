@@ -119,7 +119,7 @@ export default class ExtraTalesCore {
         return Math.floor(Math.log(xp) / Math.log(2)) + 1;
     }
 
-    static usePersonalXP(actor) {
+    static async usePersonalXP(actor) {
         let xp = parseInt(actor.getFlag('pf2e-extraordinary-tales', 'personalxp') ?? 0);
         
         if (!xp) {
@@ -135,11 +135,14 @@ export default class ExtraTalesCore {
         let colxp = parseInt(actor.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0);
         let colxpto = colxp + 2;
 
-        actor.setFlag('pf2e-extraordinary-tales', 'personalxp', xpto)
-        actor.setFlag('pf2e-extraordinary-tales', 'collateralxp', colxpto)
+        await actor.setFlag('pf2e-extraordinary-tales', 'personalxp', xpto)
+        await actor.setFlag('pf2e-extraordinary-tales', 'collateralxp', colxpto)
+
+        await actor.setFlag('pf2e-extraordinary-tales', 'personaluses', ExtraTalesCore.getUsagesFromXP(parseInt(actor.getFlag('pf2e-extraordinary-tales', 'personalxp') ?? 0)))
+        await actor.setFlag('pf2e-extraordinary-tales', 'collateraluses', ExtraTalesCore.getUsagesFromXP(parseInt(actor.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0)))
 
         ChatMessage.create({
-            content: `<strong>${actor.name}</strong> uses Personal XP!<br /> Personal XP (${xp}) <i class="fa-solid fa-arrow-right"></i> (${xpto})<br /><span style="opacity:0.6">Collateral XP (${colxp}) <i class="fa-solid fa-arrow-right"></i> (${colxpto})</span>`
+            content: `<div>Personal XP (${xp}) <i class="fa-solid fa-arrow-right"></i> (${xpto})</div><div style="opacity:0.6">Collateral XP (${colxp}) <i class="fa-solid fa-arrow-right"></i> (${colxpto})</div>`
         })
         // Math.floor(Math.log(xp) / Math.log(2))
     }
@@ -148,13 +151,16 @@ export default class ExtraTalesCore {
 
     }
 
-    static useCollateralXP(actor) {
+    static async useCollateralXP(actor) {
         let xp = parseInt(actor.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0);
         let xpto = Math.floor(xp * 0.5);
-        actor.setFlag('pf2e-extraordinary-tales', 'collateralxp', xpto)
+        await actor.setFlag('pf2e-extraordinary-tales', 'collateralxp', xpto)
         ChatMessage.create({
-            content: `<strong>${actor.name}</strong> uses Collateral XP!<br />Collateral XP (${xp}) <i class="fa-solid fa-arrow-right"></i> (${xpto})`
+            content: `<div>Collateral XP (${xp}) <i class="fa-solid fa-arrow-right"></i> (${xpto})</div>`
         })
+
+        await actor.setFlag('pf2e-extraordinary-tales', 'personaluses', ExtraTalesCore.getUsagesFromXP(parseInt(actor.getFlag('pf2e-extraordinary-tales', 'personalxp') ?? 0)))
+        await actor.setFlag('pf2e-extraordinary-tales', 'collateraluses', ExtraTalesCore.getUsagesFromXP(parseInt(actor.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0)))
 
     }
 

@@ -102,7 +102,7 @@ export default class ExtraTalesEditor extends Application {
     }
 
     async close(options={}) {
-        console.log("REMOVING HOOKS", this._fn)
+        // console.log("REMOVING HOOKS", this._fn)
         Hooks.off('updateActor', this._fn);
         super.close(options);
     }
@@ -128,11 +128,11 @@ export default class ExtraTalesEditor extends Application {
 
             if (action == "increase") {
                 let val = parseInt(actor.getFlag('pf2e-extraordinary-tales', xp) ?? 0);
-                actor.setFlag('pf2e-extraordinary-tales', xp, val + 1)
+                await actor.setFlag('pf2e-extraordinary-tales', xp, val + 1)
             }
             if (action == "decrease") {
                 let val = parseInt(actor.getFlag('pf2e-extraordinary-tales', xp) ?? 0);
-                actor.setFlag('pf2e-extraordinary-tales', xp, val - 1)
+                await actor.setFlag('pf2e-extraordinary-tales', xp, val - 1)
             }
             if (action == "edit") {
                 this.editDialog(xp, actor);
@@ -152,8 +152,8 @@ export default class ExtraTalesEditor extends Application {
                     "system.resources.heroPoints.value": Math.clamped(heroPointCount - 1, 0, 3),
                 });
             }
-            actor.setFlag('pf2e-extraordinary-tales', 'personaluses', ExtraTalesCore.getUsagesFromXP(parseInt(actor.getFlag('pf2e-extraordinary-tales', 'personalxp') ?? 0)))
-            actor.setFlag('pf2e-extraordinary-tales', 'collateraluses', ExtraTalesCore.getUsagesFromXP(parseInt(actor.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0)))
+            await actor.setFlag('pf2e-extraordinary-tales', 'personaluses', ExtraTalesCore.getUsagesFromXP(parseInt(actor.getFlag('pf2e-extraordinary-tales', 'personalxp') ?? 0)))
+            await actor.setFlag('pf2e-extraordinary-tales', 'collateraluses', ExtraTalesCore.getUsagesFromXP(parseInt(actor.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0)))
 
         })
     }

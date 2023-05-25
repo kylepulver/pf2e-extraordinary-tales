@@ -446,5 +446,5 @@ li.chat-message .tags .tag_transparent {
 }
 
 [data-tab="playlists"] {
-    display: none !important;
+    /* display: none !important; */
 }
