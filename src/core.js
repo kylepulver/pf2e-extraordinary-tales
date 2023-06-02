@@ -133,7 +133,7 @@ export default class ExtraTalesCore {
         let xpto = Math.floor(xp * 0.5);
         
         let colxp = parseInt(actor.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0);
-        let colxpto = colxp + 2;
+        let colxpto = colxp + 1;
 
         await actor.setFlag('pf2e-extraordinary-tales', 'personalxp', xpto)
         await actor.setFlag('pf2e-extraordinary-tales', 'collateralxp', colxpto)
@@ -160,6 +160,7 @@ export default class ExtraTalesCore {
         })
 
         await actor.setFlag('pf2e-extraordinary-tales', 'personaluses', ExtraTalesCore.getUsagesFromXP(parseInt(actor.getFlag('pf2e-extraordinary-tales', 'personalxp') ?? 0)))
+        
         await actor.setFlag('pf2e-extraordinary-tales', 'collateraluses', ExtraTalesCore.getUsagesFromXP(parseInt(actor.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0)))
 
     }
