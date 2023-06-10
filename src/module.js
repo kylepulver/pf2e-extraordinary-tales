@@ -439,7 +439,6 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
 
     let reveal = revealState;
     let gmId = game.users.filter(i => i.isGM)[0].id
-    console.log(data)
 
     if(game.user.id !== data.author.id && data.message.whisper.length === 1 && data.message.whisper.indexOf(data.author.id) === 0) {
         //Hide Self Rolls
