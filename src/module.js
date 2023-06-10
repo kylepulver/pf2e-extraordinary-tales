@@ -403,9 +403,6 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
 
     if (game.user.isGM)
     console.log(obj)
-    
-
-    
 
     let etconfig = game.user.getFlag("pf2e-extraordinary-tales", "config") ?? {};
     if (!etconfig.chat?.defaultCards && obj.rolls?.length) {
