@@ -165,7 +165,7 @@ Hooks.on("ready", () => {
 })
 
 Hooks.once("socketlib.ready", () => {
-	ExtraTalesCore.socket = socketlib.registerModule("pf2e-extraordinary-tales");
+    ExtraTalesCore.socket = socketlib.registerModule("pf2e-extraordinary-tales");
 
     ExtraTalesCore.socket.register("promptCollateral", ExtraTalesCore.promptCollateralXP)
 });
@@ -404,8 +404,6 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
     if (game.user.isGM)
     console.log(obj)
 
-    
-
     let etconfig = game.user.getFlag("pf2e-extraordinary-tales", "config") ?? {};
     if (!etconfig.chat?.defaultCards && obj.rolls?.length) {
         
@@ -434,10 +432,16 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
         // messages that are not chat info cards are never unrevealed
         revealState = true;
     }
-
+    
     let reveal = revealState;
 
-    if (actor) {
+    if(game.user.id !== data.author.id && data.message.whisper.length === 1 && data.message.whisper.indexOf(data.author.id) === 0) {
+        //Hide Self Rolls
+        reveal = false;
+        revealState = false;
+        html.hide();
+    }
+    else if (actor) {
         if (game.users.filter(i => i.character && i.character.id == actor.id).length) {
             reveal = true;
             revealState = true;
