@@ -1087,10 +1087,11 @@ export default class ExtraTalesEzUi extends Application {
             }
 
             if (action == "recallknowledge") {
-                game.packs.get("world.extraordinary-tales-macros").getDocuments().then((documents) => {
-                    let m = documents.find(i => i.name == "Recall Knowledge Ex")
-                    m.execute();
-                })
+                ExtraTalesCore.useRecallKnowledge(a);
+                // game.packs.get("world.extraordinary-tales-macros").getDocuments().then((documents) => {
+                //     let m = documents.find(i => i.name == "Recall Knowledge Ex")
+                //     m.execute();
+                // })
             }
 
             if (action == "moreactions") {
