@@ -55,6 +55,12 @@
     /* opacity:0.75; */
 }
 
+div.ez-ui-button > div:not(:empty) {
+    padding: 1px;
+    border: #fff2 1px solid;
+    border-radius: 3px;
+}
+
 div.hover-gold > div:hover,span.hover-gold:hover {
     color: #fd0 !important;
     cursor: pointer !important;
@@ -377,7 +383,24 @@ h1, h2, h3, h4 {
     /* background: #0002 !important; */
     border: 0 !important;
     outline: 0 !important;
-    text-shadow: 0 0 2px #f80,0 0 2px #f80,0 0 2px #f80,0 0 2px #f80;
+    text-shadow: 
+    0 1px 1px #000,
+    1px 1px 1px #000,
+    1px 0 1px #000,
+    1px -1px 1px #000,
+    0 -1px 1px #000,
+    -1px -1px 1px #000,
+    -1px 0 1px #000,
+    -1px 1px 1px #000,
+    0 1px 2px #000,
+    1px 1px 2px #000,
+    1px 0 2px #000,
+    1px -1px 2px #000,
+    0 -1px 2px #000,
+    -1px -1px 2px #000,
+    -1px 0 2px #000,
+    -1px 1px 2px #000;
+    color: #fff !important;
     border-radius: 0 !important;
 }
 .chat-message .flavor-text .target-dc-result .degree-of-success .failure,

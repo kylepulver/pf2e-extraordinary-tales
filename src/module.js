@@ -391,8 +391,13 @@ Hooks.on("hoverMeasuredTemplate", (t, hovered) => {
 });
 
 Hooks.on("updateToken", (a, b, c, d) => {
+    
     // console.log("=== update token", a, b, c, d)
+
+    // This is so a giant skull doesnt appear on tokens
     if (a.overlayEffect) {
+        if (!game.user.isGM) return;
+
         a.update({overlayEffect: ""})
     }
 })
@@ -406,9 +411,6 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
 
     let etconfig = game.user.getFlag("pf2e-extraordinary-tales", "config") ?? {};
     if (!etconfig.chat?.defaultCards && obj.rolls?.length) {
-        
-        
-
         let rendered = await renderTemplate("modules/pf2e-extraordinary-tales/templates/roll-card.hbs", obj)
         html.find(".dice-roll").html(rendered)
     }
@@ -419,10 +421,7 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
     // usually with like, "actually private rolls" or whatever
     html.find('.flavor-text').html(await TextEditor.enrichHTML(obj.flavor, {async: true}));
 
-
     let revealState = obj.getFlag("pf2e-extraordinary-tales", "revealed") ?? false;
-
-
 
     if (!obj.user.isGM) {
         // messages not created by GM are never unrevealed
@@ -491,7 +490,15 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
         }
     }
 
-    if (game.user.isGM ) {
+    let requestcheck = false;
+
+    if (obj.content) {
+        if (obj.content.startsWith('@Check')) {
+            requestcheck = true;
+        }
+    }
+
+    if (game.user.isGM && !requestcheck) {
 
         let $content = html.find('.message-content');
         $content.append(`<div class="hover-reveal hover-gold" style="font-size:85%;line-height:1;padding:0.25em;position:absolute;top:-0.75em;right:0.25em;background:#333;color:#ddd;font-weight:bold;border-radius:3px">
@@ -523,7 +530,11 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
 
     let outcome = obj.getFlag('pf2e-extraordinary-tales','outcome') ?? false;
 
-  
+    if (requestcheck) {
+            let $content = html.find('.with-repost');
+            // $content.before(`<div style="padding:2px;font-weight:bold;font-size:95%">Requested Check</div>`)
+            $content.wrap(`<div style="font-size:125%;padding:3px;margin:3px;background:#0001;display:flex;justify-content:space-around;border-radius:5px"></div>`)
+    }
 
     if (!obj.isContentVisible || obj.blind) {
         // html.find('[data-info]').css("outline", "#ccc 2px solid")

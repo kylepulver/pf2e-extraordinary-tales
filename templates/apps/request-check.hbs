@@ -1,0 +1,51 @@
+<form>
+<div class="form-group">
+    <div>
+        <label for="type">Label</label>
+        <input type="text" name="label" placeholder="Leave blank to use type as label."/>
+    </div>
+</div>
+<div class="form-group">
+    <div>
+        <label>
+            Description
+        </label>
+        <input type="text" name="description" placeholder="Inserted as flavor text above the check button."/>
+    </div>
+</div>
+<div class="form-group">
+    <div style="max-width:10em">
+    <label for="type">Type</label>
+    <select name="type" style="width:calc(100% - 2px);text-transform:uppercase">
+    {{{ selectOptions types }}}
+    </select>
+    </div>
+    <div style="max-width:4em">
+        <label for="type">DC</label>
+        <input type="number" name="dc" placeholder="10" />
+    </div>
+    <div style="max-width:4em">
+        <label for="type">Secret</label>
+        <input type="checkbox" name="secret" />
+    </div>
+    <div style="max-width:4em">
+        <label for="type">Basic</label>
+        <input type="checkbox" name="basic" />
+    </div>
+    <div style="max-width:4em">
+        <label for="type">Damage</label>
+        <input type="checkbox" name="damaging" />
+    </div>
+</div>
+<div class="form-group">
+    <div>
+        <label for="type">Traits</label>
+        <input type="text" name="traits" placeholder="fear,mental,emotion,fire,good,etc..."/>
+    </div>
+</div>
+<div class="form-group buttons">
+        <button type="submit"><i class="fa-solid fa-check"></i> Send</button>
+        <button type="close"><i class="fa-solid fa-times"></i> Cancel</button>
+    </div>
+
+</form>

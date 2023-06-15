@@ -1,11 +1,11 @@
 {
   "title": "Extraordinary Tales",
   "description": "In development, not supported for wide release. Additional rules and fun stuff for Pathfinder 2e.",
-  "version": "33",
+  "version": "35",
   "authors": [
     {
       "name": "Kyle Pulver",
-      "discord": "kpulv#9999",
+      "discord": "kpulv",
       "flags": {}
     }
   ],

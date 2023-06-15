@@ -1,4 +1,6 @@
 import ExtraTalesCollateral from "./applications/collateral.js";
+import ExtraTalesCreateRoll from "./applications/create-roll.js";
+import ExtraTalesRequestCheck from "./applications/request-check.js";
 
 export default class ExtraTalesCore {
     static initialize() {
@@ -163,6 +165,185 @@ export default class ExtraTalesCore {
         
         await actor.setFlag('pf2e-extraordinary-tales', 'collateraluses', ExtraTalesCore.getUsagesFromXP(parseInt(actor.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0)))
 
+    }
+
+    static async useCreateRoll() {
+        new ExtraTalesCreateRoll().render(true);
+    }
+
+    static async useRequestCheck() {
+        new ExtraTalesRequestCheck().render(true);
+        return;
+        const saves_list = [
+            "fortitude",
+            "reflex",
+            "will",    
+        ];
+        
+        const checks_list = [
+            "acrobatics",
+            "arcana",
+            "athletics",
+            "crafting",
+            "deception",
+            "diplomacy",
+            "intimidation",
+            "medicine",
+            "nature",
+            "occultism",
+            "performance",
+            "religion",
+            "society",
+            "stealth",
+            "survival",
+            "thievery"
+        ];
+
+        //todo: just replace this with my own thing lol
+        
+        async function callCheckMenu() {
+        await new Promise(async (resolve) => {
+                        setTimeout(resolve,200);
+                    await new Dialog({
+                        title:"Request Checks Menu",
+                        content,
+                        buttons:{ Close: { label: "Close" } },
+                    },{width: 600}).render(true);
+                    });
+        }
+        
+        const script1 = async function rollCheck(name) {
+            await new Promise(async (resolve) => {
+                        setTimeout(resolve,200);
+                    let menuContent = `
+                        <form><div class="form-group">
+                        <label><strong>DC:</strong></label>
+                        <input type='number' id='thisinputhere' name='DCValue' autofocus></input>
+                        </div></form>`;
+                    await new Dialog({
+                        title:"Enter DC",
+                        content: menuContent,
+                        buttons: {
+                            one: {
+                                icon: '<i class="fas fa-dice-d20"></i>',
+                                label: "Confirm and Post",
+                                callback: () => confirmed = true
+                            },
+                            two: {
+                                icon: '<i class="fas fa-times"></i>',
+                                label: "Cancel",
+                                callback: () => confirmed = false
+                            }
+                        },
+                        default: "one",
+                        render: () => document.getElementById("thisinputhere").focus(),
+                        close: html => {
+                            if (confirmed) {
+                                var DCValue = html.find('input[name=\'DCValue\']');
+                                if (DCValue.val()== '') {
+                                    console.log("Error: DC Not Entered.");
+                                    return ui.notifications.error("Please input a number in the DC field.");
+                                } else if (isNaN(DCValue.val())) {
+                                    console.log("Error: DC Not a Number.");
+                                    return ui.notifications.error("Please input a number in the DC field.");
+                                } else if (DCValue.val()<= 0) {
+                                    console.log("Error: DC Not Valid.");
+                                    return ui.notifications.error("Please input a number greater than zero in the DC field.");
+                                } else {
+                                    DCValue = parseInt(html.find('[name=DCValue]')[0].value);
+                                    DC = `dc:${DCValue}|`;
+                                }
+                                
+                                
+                                checkText = `@Check[type:${name}|${DC}traits:action]`;
+        
+                                ChatMessage.create({
+                                    user: game.user._id,
+                                    speaker: ChatMessage.getSpeaker(),
+                                    content: checkText
+                                });
+                                
+                            }
+                        }
+                    },{width: 300}).render(true);
+                    });
+            
+        };
+        
+        const script2 = async function rollSecretCheck(name) {
+            await new Promise(async (resolve) => {
+                        setTimeout(resolve,200);
+                    let menuContent = `
+                        <form><div class="form-group">
+                        <label><strong>DC:</strong></label>
+                        <input type='number' id='thisinputhere' name='DCValue' autofocus></input>
+                        </div></form>`;
+                    await new Dialog({
+                        title:"Enter DC",
+                        content: menuContent,
+                        buttons: {
+                            one: {
+                                icon: '<i class="fas fa-dice-d20"></i>',
+                                label: "Confirm and Post",
+                                callback: () => confirmed = true
+                            },
+                            two: {
+                                icon: '<i class="fas fa-times"></i>',
+                                label: "Cancel",
+                                callback: () => confirmed = false
+                            }
+                        },
+                        default: "one",
+                        render: () => document.getElementById("thisinputhere").focus(),
+                        close: html => {
+                            if (confirmed) {
+                                var DCValue = html.find('input[name=\'DCValue\']');
+                                if (DCValue.val()== '') {
+                                    console.log("Error: DC Not Entered.");
+                                    return ui.notifications.error("Please input a number in the DC field.");
+                                } else if (isNaN(DCValue.val())) {
+                                    console.log("Error: DC Not a Number.");
+                                    return ui.notifications.error("Please input a number in the DC field.");
+                                } else if (DCValue.val()<= 0) {
+                                    console.log("Error: DC Not Valid.");
+                                    return ui.notifications.error("Please input a number greater than zero in the DC field.");
+                                } else {
+                                    DCValue = parseInt(html.find('[name=DCValue]')[0].value);
+                                    DC = `dc:${DCValue}|`;
+                                }
+                                
+                                
+                                checkText = `@Check[type:${name}|${DC}traits:action:search,secret]`;
+        
+                                ChatMessage.create({
+                                    user: game.user._id,
+                                    speaker: ChatMessage.getSpeaker(),
+                                    content: checkText
+                                });
+                                
+                            }
+                        }
+                    },{width: 300}).render(true);
+                    });
+        };
+        
+        let content = ` `;
+        
+        
+        content += `<button name="buttonPerception" class="pbutton" type="button" onclick="rollCheck('perception')">Perception</button><button name="buttonSecretPerception" class="sbutton" type="button" onclick="rollSecretCheck('perception')"><i class="fas fa-eye-slash"></i></button>`;
+        
+        
+        saves_list.forEach((c,i) => {
+            content += `<div class="zbutton"><button name="button${i}" class="pbutton" type="button" onclick="rollCheck('${c}')">${c[0].toUpperCase() + c.substring(1)}</button><button name="buttonSecret${i}" class="sbutton" type="button" onclick="rollSecretCheck('${c}')"><i class="fas fa-eye-slash"></i></button></div>`;
+        });
+        
+        
+        checks_list.forEach((c,i) => {
+            content += `<div class="zbutton"><button name="button${i}" class="pbutton" type="button" onclick="rollCheck('${c}')">${c[0].toUpperCase() + c.substring(1)}</button><button name="buttonSecret${i}" class="sbutton" type="button" onclick="rollSecretCheck('${c}')"><i class="fas fa-eye-slash"></i></button></div>`;
+            
+        });
+        content += `</div><br></div>`;
+        callCheckMenu();
     }
 
     static async useRecallKnowledge(actor) {

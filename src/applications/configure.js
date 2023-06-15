@@ -10,6 +10,7 @@ export default class ExtraTalesConfigure extends FormApplication {
             classes:["pf2e-extraordinary-tales"],
             template: "modules/pf2e-extraordinary-tales/templates/apps/configure.hbs",
             width: 480,
+            title: "Configuration",
             height: "auto"
         });
     }

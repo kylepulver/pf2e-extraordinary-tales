@@ -700,10 +700,17 @@ export default class ExtraTalesEzUi extends Application {
 
                 let obj = a.items.get(spell);
                 let msg = await obj.toMessage(undefined, { create: false })
-                let content = await TextEditor.enrichHTML(msg.content, {async: true})
-                content += `<div data-cast style="padding:1em;background:#fff2;display:inline-block;text-transform:uppercase"><span class="hover-gold">Cast Spell (${lvltext})</span></div>`
-                content += ` <div data-counter style="padding:1em;background:#fff2;display:inline-block;text-transform:uppercase"><span class="hover-gold">Counteract</span></div>`
-                content += ` <div data-chat style="padding:1em;background:#fff2;display:inline-block;text-transform:uppercase"><span class="hover-gold">Send to Chat</span></div>`
+                let content = "";
+
+                content += `<div style="display:flex;gap:2px" class="hover-gold">`
+
+                content += `<div data-cast style="padding:0.5em;background:#fff2;flex:1;text-transform:uppercase;text-align:center">Cast Spell (${lvltext})</div>`
+                content += ` <div data-counter style="padding:0.5em;background:#fff2;flex:1;text-transform:uppercase;text-align:center">Counteract</div>`
+                content += ` <div data-chat style="padding:0.5em;background:#fff2;flex:1;text-transform:uppercase;text-align:center">Send to Chat</div>`
+                content += `</div>`
+
+                content += await TextEditor.enrichHTML(msg.content, {async: true})
+
                 instance.obj = obj;
                 instance.content(content)
             },
@@ -743,11 +750,12 @@ export default class ExtraTalesEzUi extends Application {
                 // REALLY WEIRD WORK AROUND BECAUSE OF PF2E SYSTEM BUG
                 // WITH @CHECK NOT RESOLVING 
                 let msgcontent = await TextEditor.enrichHTML(msg.content, {async: true});
+
                 let $content = $(msgcontent);
                 let content = await TextEditor.enrichHTML(obj.description, { rollData: obj.getRollData(), async:true });
                 $content.find('.card-content').html(content);
                 content = $content[0].outerHTML;
-                content += `<div data-chat style="padding:1em;background:#fff2;display:inline-block;text-transform:uppercase"><span class="hover-gold">Send to Chat</span></div>`
+                content = `<div style="display:flex" class="hover-gold"><div data-chat style="padding:0.5em;background:#fff2;flex:1;text-transform:uppercase;text-align:center">Send to Chat</div></div>` + content;
                 instance.obj = obj;
                 instance.content(content)
             },
@@ -815,13 +823,15 @@ export default class ExtraTalesEzUi extends Application {
 
                 console.log(obj);
 
+                content += `<div style="display:flex">`
+                content += ` <div data-attack style="padding:1em;background:#fff2;flex:1;text-transform:uppercase"><span class="hover-gold">Spell Attack +${obj.statistic.check.mod}</span></div>`
+                content += ` <div data-attack-two style="padding:1em;background:#fff2;flex:1;text-transform:uppercase"><span class="hover-gold">MAP -5</span></div>`
+                content += ` <div data-attack-three style="padding:1em;background:#fff2;flex:1;text-transform:uppercase"><span class="hover-gold">MAP -10</span></div>`
+                content += `</div>`
+
                 content += `<div>${obj.statistic.check.label} ${obj.statistic.check.mod}</div>`
                 content += `<div>Counteract Check ${obj.statistic.check.mod}</div>`
                 content += `<div>Spell DC ${obj.statistic.dc.value}</div>`
-
-                content += ` <div data-attack style="padding:1em;background:#fff2;display:inline-block;text-transform:uppercase"><span class="hover-gold">Spell Attack +${obj.statistic.check.mod}</span></div>`
-                content += ` <div data-attack-two style="padding:1em;background:#fff2;display:inline-block;text-transform:uppercase"><span class="hover-gold">MAP -5</span></div>`
-                content += ` <div data-attack-three style="padding:1em;background:#fff2;display:inline-block;text-transform:uppercase"><span class="hover-gold">MAP -10</span></div>`
                 
                 instance.obj = obj;
                 instance.content(content);
@@ -834,22 +844,12 @@ export default class ExtraTalesEzUi extends Application {
                 $(helper.tooltip).on('click', '[data-attack-two]', (ev) => {
                 
                     checkTarget(() => {instance.obj.statistic.check.roll({ attackNumber: 2})})
-                    // let c = instance.obj.statistic.check.clone();
-                    // c.modifiers.push(new game.pf2e.Modifier({
-                    //     label: "Multiple Attack Penalty",
-                    //     modifier: -5
-                    // }))
-                    // c.statistic.check.roll([new game.pf2e.Modifier({
-                    //     label: "Multiple Attack Penalty",
-                    //     modifier: -5
-                    // })]);
+           
                 });
                 $(helper.tooltip).on('click', '[data-attack-three]', (ev) => {
-             
                     checkTarget(() => {instance.obj.statistic.check.roll({ attackNumber: 3})})
                 });
 
-             
             },
             contentAsHTML: true,
             delay: 200,
@@ -880,25 +880,31 @@ export default class ExtraTalesEzUi extends Application {
                 if (obj.description)
                     msg = await obj.item.toMessage(undefined, { create: false });
                 
+                let content = ``;
 
-                let content = await TextEditor.enrichHTML(msg.content, {async: true});
+                let idx = 0;
+                content += `<div style="display:flex;gap:2px" class="hover-gold">`
+                for(let v of obj.variants) {
+                    content += `<div data-act="${idx}" style="flex:1;padding:0.5em;text-align:center;text-transform:uppercase;background:#fff1"> ${v.label} </div>  `
+                    idx += 1;
+                }
+                content += `</div>`
+
+                content += `<div style="padding:0.5em;line-height:1;background:#fff1"><div style="text-transform:uppercase;padding:0.2em 0;"><div style="font-weight:bold">damage</div>${dmg}</div><div style="text-transform:uppercase;padding:0.2em 0"><div style="font-weight:bold">critical</div>${crit}</div></div>`
+
+                content += await TextEditor.enrichHTML(msg.content, {async: true});
 
                 if (obj.weapon) {
                     content += `<div style="text-transform:uppercase">${obj.weapon.type} +${obj.totalModifier}</div>`
                     content += `<div>reach ${obj.weapon.reach}</div>`
                     for(let t of obj.traits) {
-                        content += `<div>${game.i18n.localize(t.label)}</div>`
+                        content += `<div style="font-size:125%">${game.i18n.localize(t.label)}</div>`
                         content += `<div>${game.i18n.localize(t.description)}</div>`
                     }
                 }
 
-                content += `<div style="padding:0.1em 0;line-height:1;opacity:0.9"><div style="text-transform:uppercase;padding:0.2em 0;"><div style="font-weight:bold">damage</div>${dmg}</div><div style="text-transform:uppercase;padding:0.2em 0"><div style="font-weight:bold">critical</div>${crit}</div></div>`
+          
 
-                let idx = 0;
-                for(let v of obj.variants) {
-                    content += `<div data-act="${idx}" style="display:inline-block;padding:1em;text-transform:uppercase;background:#fff2"><span class="hover-gold">${v.label}</span></div>  `
-                    idx += 1;
-                }
                 instance.obj = obj;
                 instance.content(content)
             },
@@ -1039,7 +1045,6 @@ export default class ExtraTalesEzUi extends Application {
             // let obj = a.system.actions.find(i => i.label == act);
             let obj = a.system.actions[act]
             checkTarget(() => obj.roll());
-           
         });
 
         html.on('click', '[data-key]', (ev) => {
@@ -1088,10 +1093,14 @@ export default class ExtraTalesEzUi extends Application {
 
             if (action == "recallknowledge") {
                 ExtraTalesCore.useRecallKnowledge(a);
-                // game.packs.get("world.extraordinary-tales-macros").getDocuments().then((documents) => {
-                //     let m = documents.find(i => i.name == "Recall Knowledge Ex")
-                //     m.execute();
-                // })
+            }
+
+            if (action == "requestcheck") {
+                ExtraTalesCore.useRequestCheck();
+            }
+
+            if (action == "createroll") {
+                ExtraTalesCore.useCreateRoll();
             }
 
             if (action == "moreactions") {
@@ -1203,6 +1212,11 @@ export default class ExtraTalesEzUi extends Application {
                 }
             }
 
+            if (action == "configure") {
+                console.log("oihdag")
+                new ExtraTalesConfigure().render(true);
+            }
+
             if (game.combat) {
                 if (action == "combatprev") {
                     if (!game.user.isGM) return;
@@ -1222,10 +1236,6 @@ export default class ExtraTalesEzUi extends Application {
                 if (action == "combatend") {
                     if (!game.user.isGM) return;
                     game.combat.endCombat();
-                }
-
-                if (action == "configure") {
-                    new ExtraTalesConfigure().render(true);
                 }
 
                 let esc = parseInt(game.combat.getFlag("pf2e-extraordinary-tales", "escalation") ?? 0)

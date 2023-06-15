@@ -126,11 +126,9 @@
 
                         <div style="display:flex;gap:2px;align-items:center">
                         {{#each instance.dice as |dice|}}
-                            {{#if (gt instance.dice.length 1)}}
                             <div style="opacity:0.75;outline:#0004 1px solid;padding:0 1px;white-space:nowrap">
-                                <span style="font-size:80%;">{{dice.formula}}</span>
+                                <span style="font-size:80%;">{{dice.expression}}</span>
                             </div>
-                            {{/if}}
                             {{#each dice.results}}
                             <div style="background:#0001;outline:#0004 1px solid;padding:0 1px;white-space:nowrap">
                                 <span style="font-size:80%;">{{this.result}}</span>
@@ -194,7 +192,7 @@
         {{else}}
     
         <div style="display:flex;align-items:center;line-height:1">
-            <div style="font-size:200%;width:1.5em;overflow:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em"  data-info>
+            <div style="font-size:200%;width:1.5em;overflow:hidden;white-space:nowrap;text-align:center;letter-spacing:-0.05em" data-info>
                 {{total}}
             </div>
 
