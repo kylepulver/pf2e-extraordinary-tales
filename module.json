@@ -1,7 +1,7 @@
 {
   "title": "Extraordinary Tales",
   "description": "In development, not supported for wide release. Additional rules and fun stuff for Pathfinder 2e.",
-  "version": "35",
+  "version": "38",
   "authors": [
     {
       "name": "Kyle Pulver",
@@ -32,5 +32,18 @@
   "compatibility": {
     "minimum": "10",
     "verified": "10"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "pf2e",
+        "type": "system",
+        "manifest": "https://github.com/foundryvtt/pf2e/releases/download/latest/system.json",
+        "compatibility": {
+          "minimum": "4.7.4",
+          "verified": "5.0.0"
+        }
+      }
+    ]
   }
 }
