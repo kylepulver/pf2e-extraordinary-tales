@@ -26,7 +26,7 @@ export default class ExtraTalesCore {
         let xpAfter = Math.floor(xpRemaining * 0.5);
 
         let collateral = parseInt(actor.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0);
-        let collateralAfter = collateral + 2;
+        let collateralAfter = collateral + 1;
 
         let d = new Dialog({
             title: `Use Personal XP Ability`,

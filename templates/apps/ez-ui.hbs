@@ -71,12 +71,12 @@
                     <span style="letter-spacing:-0.05em">All Actions</span>
                 </div>
 
-                <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-key="system.attributes.initiative" data-tip="Roll initiative for an encounter">
+                <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-key="initiative" data-tip="Roll initiative for an encounter">
                     <span style="letter-spacing:-0.05em">Initiative</span>
                 </div>
         <div style="height:2px"></div>
 
-                <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-key="system.attributes.perception">
+                <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-key="perception">
                     <span style="letter-spacing:-0.05em">Perception</span>
                     {{this.system.attributes.perception.value}}
                     <span style="letter-spacing:-0.05em;font-size:90%;opacity:0.75">({{add this.system.attributes.perception.value 10}})</span>
@@ -282,6 +282,7 @@
             </div>
             {{/with}}
         </div>
+        <div style="height:2px"></div>
         <div>
             <div style="display:flex;align-items:center;text-align:center;gap:2px;text-transform:uppercase;opacity:0.75">
                 <div style="flex:0 0 1.5rem">
