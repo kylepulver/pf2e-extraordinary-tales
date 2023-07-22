@@ -1,7 +1,7 @@
 <form>
 
 {{#each self}}
-<h2>{{this.name}}</h2>
+<h2 style="display:flex;align-items:center"><img src="{{this.prototypeToken.texture.src}}" style="width:1.5em;height:1.5em"> {{this.name}}</h2>
 <div data-actor-id="{{this.id}}">
 <div class="form-group">
 
@@ -28,19 +28,21 @@
 </div>
 {{/each}}
 
-<div  style="display:flex;align-items:center;text-align:center">
-    <div style="flex: 0 0 30%"></div>
-    <div  style="flex: 3">Personal XP</div>
-    <div  style="flex: 3">Uses</div>
-    <div  style="flex: 3">Collateral XP</div>
-    <div  style="flex: 3">Uses</div>
-    <div  style="flex: 3">Hero Points</div>
-</div>
 
+<h2>Party</h2>
+<div style="display:flex;align-items:center;text-align:center">
+    <div style="flex: 0 0 30%"></div>
+    <h3  style="flex: 3">Personal XP</h3>
+    <h3  style="flex: 3">Uses</h3>
+    <h3  style="flex: 3">Collateral XP</h3>
+    <h3  style="flex: 3">Uses</h3>
+    <h3  style="flex: 3">Hero Points</h3>
+</div>
 
 {{#each characters}}
 <div  style="display:flex;align-items:center;text-align:center;padding: 0.25em 0">
-<div style="flex: 0 0 30%">
+<div style="display:flex;align-items:center;justify-content:center;flex: 0 0 30%;gap:2px">
+    <img src="{{this.prototypeToken.texture.src}}" style="width:1.5em;height:1.5em">
     {{this.name}}
     </div>
 <div style="flex: 3">
@@ -61,5 +63,18 @@
 </div>
 {{/each}}
 
+<h2>Aid</h2>
+    {{#each aidmessages}}
+    <h3>{{this.flags.pf2e.modifierName}}</h3>
+    {{#each this.flags.pf2e-extraordinary-tales.aid}}
+<div style="display:flex;align-items:center;gap:2px">
+    {{#if this}}
+    <img src="{{../actor.prototypeToken.texture.src}}" style="width:1.5em;height:1.5em"> {{../actor.name}} aided {{#with (lookup @root.charactersById @key)}}<img src="{{this.prototypeToken.texture.src}}" style="width:1.5em;height:1.5em"> {{this.name}}{{/with}}
+    <span style="opacity:0.5">{{timeSince ../timestamp}}</span>
+
+    {{/if}}
+</div>
+    {{/each}}
+    {{/each}}
 
 </form>

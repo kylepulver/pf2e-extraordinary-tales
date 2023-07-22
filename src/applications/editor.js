@@ -31,8 +31,14 @@ export default class ExtraTalesEditor extends Application {
 
         // data.characters = game.actors.filter(a => a.type == 'character');
 
-        
-        
+        data.aidmessages = [];
+        let recentMessages = game.messages.filter(m => m.timestamp > Date.now() - 1000 * 60 * 60 * 24).filter(m => m.getFlag('pf2e-extraordinary-tales','aid') ?? false !== false);
+
+        for (let m of recentMessages) {
+            console.log(m);
+            data.aidmessages.push(m);
+
+        }
 
         data.personalxp = {}
         data.collateralxp = {};
@@ -43,9 +49,11 @@ export default class ExtraTalesEditor extends Application {
         data.aidprovided = {}
         data.heropoints = {};
         data.characters = [];
+        data.charactersById = {};
         for(let u of game.users.values()) {
             if (u.character) {
                 data.characters.push(u.character);
+                data.charactersById[u.character.id] = u.character;
             }
         }
         
@@ -119,6 +127,9 @@ export default class ExtraTalesEditor extends Application {
                 }
             });
         }
+
+
+        
 
         html.on('click', '[data-action]', async (ev) => {
             let action = ev.currentTarget.dataset.action;

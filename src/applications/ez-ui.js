@@ -7,6 +7,8 @@ export default class ExtraTalesEzUi extends Application {
     constructor() {
         super();
 
+        this._overrideClose = false;
+
         this._collapsed = false;
 
         Hooks.on("updateActor", async (data, update, options, userid) => {
@@ -530,6 +532,19 @@ export default class ExtraTalesEzUi extends Application {
             popOut: false,
             scrollY: ["ez-ui-scrolling"]
         });
+    }
+
+    async close(options={}) {
+        if (this._overrideClose) {
+            return super.close(options)
+        }
+        else {
+        }
+            // super.close(options);
+            // await this.render(true);
+        ui.notifications.warn("Closing this window is disabled.");
+
+        
     }
 
     async getData() {
@@ -1164,12 +1179,11 @@ export default class ExtraTalesEzUi extends Application {
             }
 
             if (action == "popout") {
-                // this.popOut = !this.popOut;
                 this.options.popOut = !this.popOut;
+                this._overrideClose = true;
                 await this.close();
                 await this.render(true);
-                console.log(this.position);
-                // this.render(true);
+                this._overrideClose = false;
             }
 
             if (action == "refocus") {
@@ -1185,7 +1199,7 @@ export default class ExtraTalesEzUi extends Application {
                 hp.valuemod = "";
                 hp.temp = a.attributes.hp.temp;
                 hp.tempmod = "";
-
+h4
                 new Dialog({
                     title: "Change Hit Points",
                     content: content,
@@ -1230,7 +1244,6 @@ export default class ExtraTalesEzUi extends Application {
             }
 
             if (action == "configure") {
-                console.log("oihdag")
                 new ExtraTalesConfigure().render(true);
             }
 
