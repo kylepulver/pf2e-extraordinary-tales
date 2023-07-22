@@ -4,7 +4,12 @@
 {{#if collapsed}}
 <div style="display:none">
 {{else}}
-<div style="line-height:1;width:300px;left:{{position.left}}px;top:{{position.top}}px;z-index:100;background:#111c;color:#ddd;position:fixed;">
+{{#if fixed}}
+<div style="line-height:1;width:300px;right:{{right}}px;bottom:0;z-index:20;background:#111c;color:#ddd;position:fixed;">
+{{else}}
+<div style="line-height:1;width:300px;left:{{position.left}}px;top:{{position.top}}px;z-index:20;background:#111c;color:#ddd;position:fixed;">
+{{/if}}
+
 {{/if}}
 {{/if}}
     <div style="padding:2px;">
@@ -403,15 +408,19 @@
                 <span style="opacity:0.5">{{this.flags.pf2e-extraordinary-tales.collateralxp}}</span>
             </div>
             {{/with}}
-            <div data-action="extraordinarytales" style="flex:1;font-size:80%">
+            <div data-action="extraordinarytales" style="flex:1;font-size:80%" data-tip="Edit XP and Hero Points">
                 <i class="fa-solid fa-scroll"></i>
                 extraordinary tales
             </div>
-            <div data-action="configure" style="flex:0 0 1em" >
+            <div data-action="configure" style="flex:0 0 1em" data-tip="Configure EZ-UI">
                 <i class="fa-solid fa-cog"></i>
             </div>
-            <div data-action="popout" style="flex:0 0 1em" >
+            <div data-action="popout" style="flex:0 0 1em" data-tip="Toggle Pop Out" >
+                {{#if popOut}}
+                <i class="fa-solid fa-lock"></i>
+                {{else}}
                 <i class="fa-solid fa-up-right-from-square"></i>
+                {{/if}}
             </div>
         </div>
 

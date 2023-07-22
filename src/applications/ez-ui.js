@@ -551,6 +551,8 @@ export default class ExtraTalesEzUi extends Application {
             }
         }
 
+        data.fixed = true;
+
         data.popOut = this.popOut;
         data.position = this.position;
 
