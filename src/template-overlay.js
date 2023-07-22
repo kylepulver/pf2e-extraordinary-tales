@@ -10,7 +10,7 @@ export default class ExtraTalesTemplateOverlay extends BasePlaceableHUD {
         const data = super.getData();
 
         if (this.object?.data) {
-            console.log(this.object.data.getFlag("pf2e", "origin"));
+            // console.log(this.object.data.getFlag("pf2e", "origin"));
             data.note = this.object.data.getFlag("pf2e", "origin")?.name ?? "";
         }
 
