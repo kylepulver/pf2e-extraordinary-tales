@@ -13,4 +13,14 @@ Hooks.once("init", () => {
     //         none: game.i18n.localize("pf2e-alignment-damage.settings.alignmentConfig.none"),
     //     }
     // });
+    game.settings.register("pf2e-extraordinary-tales", "simplePlayerControls", {
+        name: "Simple Player Controls",
+        hint: "Replace the default control panel on the left with a different panel that only displays the essentials.",
+        icon: "fas fa-cog",
+        scope: "client",
+        config: true,
+        default: true,
+        type: Boolean,
+        // onChange: rule => window.location.reload(),
+    });
 });

@@ -5,6 +5,7 @@ import ExtraTalesEzUi from "./applications/ez-ui.js";
 import ExtraTalesCore from "./core.js";
 import ExtraTalesTokenOverlay from "./token-overlay.js";
 import ExtraTalesTemplateOverlay from "./template-overlay.js";
+// import PlayerTools from "./applications/player-tools.js";
 
 const MODULE_ID = 'pf2e-extraordinary-tales';
 
@@ -72,7 +73,25 @@ Hooks.on('init', () => {
             }
         }
     })
+
+    // game.extratales = {
+    //     playertools: new PlayerTools()
+    // }
 })
+
+// Hooks.on("renderSidebar", (app, html, data) => {
+//     let setting = game.settings.get("pf2ez", "simplePlayerControls") ?? true;
+//     if (!game.user.isGM && setting) {
+//         html.find(`[data-tab="journal"]`).hide();
+//         html.find(`[data-tab="actors"]`).hide();
+//         html.find(`[data-tab="items"]`).hide();
+//         html.find(`[data-tab="combat"]`).hide();
+//         html.find(`[data-tab="tables"]`).hide();
+//         html.find(`[data-tab="compendium"]`).hide();
+//         html.find(`[data-tab="settings"]`).hide();
+//         html.find(`[data-tab="cards"]`).hide();
+//     }
+// });
 
 Hooks.on("ready", () => {
     // game.pf2e.ModifierType["HEROIC"] = "heroic";
@@ -148,7 +167,7 @@ Hooks.on("ready", () => {
 
         roll._total = roll._evaluateTotal();
         // await game.dice3d.renderRolls(message, [newroll])
-        console.log(message);
+        // console.log(message);
         game.dice3d.showForRoll(newroll, message.user, true, null, false, message.id, message.speaker);
         // await game.dice3d.waitFor3DAnimationByMessageID(message.id);
         await message.update({"rolls": duplicate(message.rolls)})
@@ -160,8 +179,9 @@ Hooks.on("ready", () => {
         game.user.character.setFlag('pf2e-extraordinary-tales', 'personaluses', ExtraTalesCore.getUsagesFromXP(parseInt(game.user.character.getFlag('pf2e-extraordinary-tales', 'personalxp') ?? 0)))
         game.user.character.setFlag('pf2e-extraordinary-tales', 'collateraluses', ExtraTalesCore.getUsagesFromXP(parseInt(game.user.character.getFlag('pf2e-extraordinary-tales', 'collateralxp') ?? 0)))
     }
-
     new ExtraTalesEzUi().render(true);
+    // game.extratales.ezui = new ExtraTalesEzUi();
+    // game.extratales.ezui.render(true);
 })
 
 Hooks.once("socketlib.ready", () => {

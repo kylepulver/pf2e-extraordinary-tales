@@ -1,0 +1,7 @@
+<div style="position:fixed;color:white;background:#0005;padding:0.25em" id="extratales-player-tools">
+    {{#each controls}}
+    <div data-action="use;{{@index}}" style="text-align:center;text-transform:uppercase;padding:0.25em;margin:0.25em;background:#0008;{{#if this.active}}color:#ff0;{{/if}}">
+        <div data-tip="{{this.name}}"><i class="fa-solid fa-2x fa-fw {{this.icon}}"></i></div>
+    </div>
+    {{/each}}
+</div>
