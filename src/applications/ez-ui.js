@@ -539,10 +539,15 @@ export default class ExtraTalesEzUi extends Application {
             return super.close(options)
         }
         else {
+            this.options.popOut = false;
+            this._overrideClose = true;
+            await this.close()
+            await this.render(true);
+            this._overrideClose = false;
+
         }
             // super.close(options);
             // await this.render(true);
-        ui.notifications.warn("Closing this window is disabled.");
 
         
     }
