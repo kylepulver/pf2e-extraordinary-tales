@@ -523,10 +523,12 @@ export default class ExtraTalesEzUi extends Application {
             // classes: ["dnd5e"],
             id: 'extra-tales-ez-ui',
             classes:["pf2e-extraordinary-tales"],
+            title: "Ez UI",
             template: "modules/pf2e-extraordinary-tales/templates/apps/ez-ui.hbs",
             width: "auto",
             height: "auto",
             popOut: false,
+            scrollY: ["ez-ui-scrolling"]
         });
     }
 
@@ -547,6 +549,8 @@ export default class ExtraTalesEzUi extends Application {
                 data.combat = game.combat;
             }
         }
+
+        data.popOut = this.popOut;
 
         data.actors = [];
 
@@ -1027,7 +1031,7 @@ export default class ExtraTalesEzUi extends Application {
             let t = canvas.scene.tokens.get(token) ?? {};
             let a = t.actor ?? game.actors.get(actor)
 
-            let obj = a.system.toggles.find(i => i.itemId == toggle);
+            let obj = a.synthetics.toggles.find(i => i.itemId == toggle);
             
             a.toggleRollOption(obj.domain, obj.option, obj.itemId, obj.checked ? false : true)
 
@@ -1153,6 +1157,14 @@ export default class ExtraTalesEzUi extends Application {
 
             if (action == "rest") {
                 game.pf2e.actions.restForTheNight({ ev, actors: [a] });
+            }
+
+            if (action == "popout") {
+                // this.popOut = !this.popOut;
+                this.options.popOut = !this.popOut;
+                await this.close();
+                await this.render(true);
+                // this.render(true);
             }
 
             if (action == "refocus") {

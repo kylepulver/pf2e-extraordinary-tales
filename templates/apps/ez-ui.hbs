@@ -1,4 +1,8 @@
+{{#if popOut}}
+<div style="line-height:1;background:#111c;color:#ddd;border-radius:3px">
+{{else}}
 <div style="line-height:1;width:300px;bottom:0;z-index:100;right:{{right}}px;background:#111c;color:#ddd;position:fixed;">
+{{/if}}
     <div style="padding:2px;">
         {{#if combat}}
         <div style="font-variant:small-caps">
@@ -33,7 +37,7 @@
                 </div>
                 {{/if}}
             </div>
-            <div style="max-height:150px;overflow-y:auto;overflow-x:hidden;scrollbar-width: thin;" style="hover-gold">
+            <div style="max-height:150px;overflow-y:auto;overflow-x:hidden;scrollbar-width: thin;" class="hover-gold ez-ui-scrolling">
             {{#each combat.turns}}
             <div
             style="
@@ -57,7 +61,7 @@
         <div style="font-variant:small-caps;">
             {{#with actor}}
             <div style="display:flex">
-                <div style="flex:2;max-height:450px;overflow-y:auto;scrollbar-width: thin;" class="hover-gold ez-ui-button">
+                <div style="flex:2;max-height:450px;overflow-y:auto;scrollbar-width: thin;" class="hover-gold ez-ui-button ez-ui-scrolling">
 
                 <div data-actor="{{this.id}}" data-token="{{this.token.id}}" data-action="flatcheck" data-tip="Roll a d20 Flat Check">
                     <span style="letter-spacing:-0.05em">d20 Flat Check</span>
@@ -153,9 +157,9 @@
                 {{/each}} --}}
                 
                 </div>
-                <div style="flex:3;max-height:450px;overflow-y:auto;scrollbar-width: thin;" class="hover-gold ez-ui-button">
+                <div style="flex:3;max-height:450px;overflow-y:auto;scrollbar-width: thin;" class="hover-gold ez-ui-button ez-ui-scrolling">
         {{#unless @root.config.hideSections.toggleValues}}
-                    {{#each this.system.toggles}}
+                    {{#each this.synthetics.toggles}}
                         <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-toggle="{{this.itemId}}">
                         {{#if this.checked}}
                         [&check;]
@@ -401,6 +405,9 @@
             </div>
             <div data-action="configure" style="flex:0 0 1em" >
                 <i class="fa-solid fa-cog"></i>
+            </div>
+            <div data-action="popout" style="flex:0 0 1em" >
+                <i class="fa-solid fa-up-right-from-square"></i>
             </div>
         </div>
 
