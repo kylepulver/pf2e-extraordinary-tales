@@ -522,7 +522,7 @@ export default class ExtraTalesEzUi extends Application {
         return foundry.utils.mergeObject(super.defaultOptions, {
             // classes: ["dnd5e"],
             id: 'extra-tales-ez-ui',
-            classes:["pf2e-extraordinary-tales"],
+            classes:["pf2e-extraordinary-tales", "ez-ui-dense"],
             title: "Ez UI",
             template: "modules/pf2e-extraordinary-tales/templates/apps/ez-ui.hbs",
             width: "auto",
@@ -537,6 +537,7 @@ export default class ExtraTalesEzUi extends Application {
 
         data.isGM = game.user.isGM;
 
+        data.collapsed = this._collapsed;
         data.username = game.user.name;
         if (this._collapsed) {
             data.right = 0;
@@ -551,6 +552,7 @@ export default class ExtraTalesEzUi extends Application {
         }
 
         data.popOut = this.popOut;
+        data.position = this.position;
 
         data.actors = [];
 
@@ -1164,6 +1166,7 @@ export default class ExtraTalesEzUi extends Application {
                 this.options.popOut = !this.popOut;
                 await this.close();
                 await this.render(true);
+                console.log(this.position);
                 // this.render(true);
             }
 

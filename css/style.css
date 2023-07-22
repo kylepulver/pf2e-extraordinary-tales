@@ -471,3 +471,7 @@ li.chat-message .tags .tag_transparent {
 [data-tab="playlists"] {
     /* display: none !important; */
 }
+
+.ez-ui-dense .window-content {
+    padding: 0;
+}
