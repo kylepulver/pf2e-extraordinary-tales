@@ -475,3 +475,8 @@ li.chat-message .tags .tag_transparent {
 .ez-ui-dense .window-content {
     padding: 0;
 }
+
+#effects-panel.dorako-ui{
+    overflow: hidden !important;
+    padding: 0 !important;
+}
