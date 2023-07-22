@@ -476,7 +476,12 @@ li.chat-message .tags .tag_transparent {
     padding: 0;
 }
 
-#effects-panel.dorako-ui{
+#effects-panel.dorako-ui {
     overflow: hidden !important;
     padding: 0 !important;
+    pointer-events: none !important;
+}
+
+#effects-panel.dorako-ui .effect-item {
+    pointer-events: all !important;
 }
