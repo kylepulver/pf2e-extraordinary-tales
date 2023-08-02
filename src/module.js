@@ -53,7 +53,8 @@ Hooks.on('init', () => {
         "climb speed": "fa-solid fa-person-hiking"
     }
     Handlebars.registerHelper("icon", (value) => {
-        if (!value.toLowerCase)return value;
+        if (!value) return value;
+        if (!value.toLowerCase) return value;
         if (icondata.hasOwnProperty(value.toLowerCase().trim())) {
             return `<i class="${icondata[value.toLowerCase().trim()]} fa-fw"></i>`;
         }
@@ -190,6 +191,11 @@ Hooks.once("socketlib.ready", () => {
     ExtraTalesCore.socket.register("promptCollateral", ExtraTalesCore.promptCollateralXP)
 });
 
+Hooks.on("diceSoNiceRollStart", (messageId, context) => {
+    // context.roll.secret = true;
+    // context.roll.ghost = true;
+})
+
 Hooks.on('getChatLogPF2eEntryContext', (obj, items) => {
 
     items.push({
@@ -200,7 +206,76 @@ Hooks.on('getChatLogPF2eEntryContext', (obj, items) => {
             new ExtraTalesAid(message).render(true)
         }
     },{
-        name: "Reveal Details",
+        name: "Reroll as Secret Roll",
+        icon: "<i class=\"fa-solid fa-eye-slash\"></i>",
+        condition: li => {
+            const message = game.messages.get(li.data("messageId"));
+            return !message.blind && (message.isAuthor || game.user.isGM)
+        },
+        callback: async li => {
+            const message = game.messages.get(li.data("messageId"));
+
+            // message.blind = true;
+            // message.whisper = ChatMessage.getWhisperRecipients("GM").map(u => u.id);
+            
+            await message.update({
+                blind: true,
+                whisper: ChatMessage.getWhisperRecipients("GM").map(u => u.id)
+            });
+
+            for (let i = 0; i < message.rolls.length; i++) {
+                let r = message.rolls[i];
+                
+                let newroll = await r.reroll({async: true});
+                message.rolls[i] = newroll;
+                newroll.secret = true;
+                newroll.ghost = true;
+                // if (!game.user.isGM) {
+                // }
+                game.dice3d.showForRoll(newroll, message.user, true, null, false, message.id, message.speaker);
+            }
+
+            await message.update({
+                rolls: duplicate(message.rolls),
+            })
+        }
+    },{
+        name: "Reveal as Public Roll",
+        icon: "<i class=\"fa-solid fa-eye\"></i>",
+        condition: li => {
+            const message = game.messages.get(li.data("messageId"));
+            return message.blind && (message.isAuthor || game.user.isGM)
+        },
+        callback: li => {
+            const message = game.messages.get(li.data("messageId"));
+
+            new Dialog({
+                title: `Disclose Details`,
+                content: `<p>Reveal this secret roll?</p>`,
+                render: html => {},
+                buttons: {
+                    button1: {
+                        label: "Confirm",
+                        callback: async () => {
+                            message.update({
+                                blind: false,
+                                whisper: []
+                            })
+                        },
+                        icon: `<i class="fas fa-check"></i>`
+                        },
+                    button2: {
+                        label: "Cancel",
+                        callback: () => { },
+                        icon: `<i class="fas fa-times"></i>`
+                    }
+                }
+            }).render(true);
+
+            
+        }
+    },{
+        name: "Disclose Details",
         icon: "<i class=\"fa-solid fa-clipboard\"></i>",
         condition: li => {
             return game.user.isGM;
@@ -221,7 +296,7 @@ Hooks.on('getChatLogPF2eEntryContext', (obj, items) => {
             content += `<div class="form-group"><div style="flex: 0 0 2em"><input type="checkbox" name="all" ${allchecked}></div><label>All Players</label></div></form>`
 
             new Dialog({
-                title: `Reveal Details`,
+                title: `Disclose Details`,
                 content: content,
                 render: html => {
                     html.on('change', '[type="checkbox"]', (ev) => {
@@ -254,6 +329,16 @@ Hooks.on('getChatLogPF2eEntryContext', (obj, items) => {
                     }
                 }
             }).render(true);
+        }
+    },{
+        name: "Print JSON to Console",
+        icon: "<i class=\"fa-solid fa-code\"></i>",
+        condition: li => {
+            return game.user.isGM
+        },
+        callback: li => {
+            const message = game.messages.get(li.data("messageId"));
+            console.log(message);
         }
     })
 
@@ -411,15 +496,16 @@ Hooks.on("hoverMeasuredTemplate", (t, hovered) => {
 });
 
 Hooks.on("updateToken", (a, b, c, d) => {
+    // This is actually a setting in the core foundry stuff. Disable auto NPC death at 0 hp.
     
     // console.log("=== update token", a, b, c, d)
 
     // This is so a giant skull doesnt appear on tokens
-    if (a.overlayEffect) {
-        if (!game.user.isGM) return;
+    // if (a.overlayEffect) {
+    //     if (!game.user.isGM) return;
 
-        a.update({overlayEffect: ""})
-    }
+    //     a.update({overlayEffect: ""})
+    // }
 })
 
 Hooks.on(`renderChatMessage`, async (obj, html, data) => {
@@ -599,8 +685,6 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
         html.append(`<div style="inset:0;background:#0002;z-index:7;position:absolute;pointer-events:none"></div>`)
         html.append(`<div style="inset:0;box-shadow: inset 0 0 12px 2px #8888, inset 0 0 2px 0 #888;z-index:10;position:absolute;pointer-events:none"></div>`)
     }
-
-    
     
     return;
 
@@ -616,7 +700,7 @@ Hooks.on("createChatMessage", (msg, options, user) => {
                     new Dialog({
                         title: "Information",
                         buttons: {},
-                        content: `<div style="font-size:150%;user-select:all;">${msg.data.content}</div>`,
+                        content: `<div style="font-size:150%;user-select:all;white-space:pre-line">${msg.data.content}</div>`,
                     }).render(true);
                 }
             }
@@ -658,13 +742,13 @@ Hooks.on('renderCombatTracker', (app, html, data) => {
         if (act == "escup") {
             game.combat.setFlag('pf2e-extraordinary-tales','escalation', esc + 1)
             ChatMessage.create( {
-                content: `Escalation (${esc}) <i class="fa-solid fa-arrow-right"></i> (${esc + 1})`
+                content: `<i class="fa-solid fa-star"></i> Escalation (${esc}) <i class="fa-solid fa-arrow-right"></i> (${esc + 1})`
             })
         }
         if (act == "escdown") {
             game.combat.setFlag('pf2e-extraordinary-tales','escalation', esc - 1)
             ChatMessage.create( {
-                content: `Escalation (${esc}) <i class="fa-solid fa-arrow-right"></i> (${esc - 1})`
+                content: `<i class="fa-solid fa-star"></i> Escalation (${esc}) <i class="fa-solid fa-arrow-right"></i> (${esc - 1})`
             })
         }
     })
@@ -683,19 +767,13 @@ hefty: use base damage
 wimpy: use ability score
 
 todo:
-- reroll not showing
-- prevent attack roll without target
-- test sequencer video
 - include scuff damage on attack rolls
 - format chat card with single check
-- EH recall knwoledge bug 
-
 
 - reroll as secret menu item
 - set to public menu item
 
 - calculate scuff damage
-- revise recall knwoledge macro to own thing
 - add indication to roll when rerolled with hero point
 
 - editing rolls
@@ -703,12 +781,12 @@ todo:
 - extra tales: track aid
 
 - roll attack damages from ez ui
+- damage: scuff damage
+- format chat for @Check or whatever
 - show "spell" when ability is spell
 - ez ui: spell attack map
 - fix modifiers in skill roll preview
 - add rules text about skill in hover skill ez ui
-- format chat for @Check or whatever
-- reposition ez ui by dragging
 - more strike info (melee / ranged)
 - chat: type thing from ez ui to roll it
 - hide roll notes by default, click to expand
@@ -720,16 +798,21 @@ todo:
 - ez ui: icons
 - ez ui: prompt for exploration activites
 - ez ui: open sheet to specific tab
-- ez ui: scroll position on re-render
 - template: tied to chat card
 - template: tied to item
-- damage: scuff damage
 - damage: damage editor
 - chat: reminder pins from GM
 - chat: damage application window
 - sidebar: hover over actors for preview
-- journal: investigate simultaneous editing
 
+- test sequencer video
+- OK reroll not showing
+- OK prevent attack roll without target
+- OK EH recall knwoledge bug 
+- OK revise recall knwoledge macro to own thing
+- OK reposition ez ui by dragging
+- OK journal: investigate simultaneous editing
+- OK ez ui: scroll position on re-render
 - OK collateral prompt fixed
 - OK too many modifiers were showing
 - OK make GM whispers more obvious
