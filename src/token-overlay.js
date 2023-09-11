@@ -105,7 +105,7 @@ export default class ExtraTalesTokenOverlay extends BasePlaceableHUD {
             // }
 
             data.effects = [];
-            for(let i of this.object.actor.conditions.values()) {
+            for(let i of this.object.actor.conditions.active) {
                 data.effects.push(i)
             }
         }
