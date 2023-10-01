@@ -485,3 +485,7 @@ li.chat-message .tags .tag_transparent {
 #effects-panel.dorako-ui .effect-item {
     pointer-events: all !important;
 }
+
+button .cue {
+    display:none !important;
+}
