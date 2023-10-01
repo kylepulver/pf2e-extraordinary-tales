@@ -583,6 +583,10 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
             if ((html.find('h4.action').text().match(/skill check:/i) ?? false)) {
                 revealState = true;
             }
+
+            if ((html.find('h4.action').text().match(/recovery:/i) ?? false)) {
+                revealState = true;
+            }
         }
     }
 
@@ -780,6 +784,7 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
         let h4html = html.find('h4.action').html();
         h4html = h4html.replace(/damage roll:/i, `<i class="fa-solid fa-heart-crack fa-fw" data-tooltip="Damage Roll"></i>`);
         h4html = h4html.replace(/skill check:/i, `<i class="fa-solid fa-dice-d20 fa-fw" data-tooltip="Skill Check"></i>`);
+        h4html = h4html.replace(/recovery:/i, `<i class="fa-solid fa-heart fa-fw" data-tooltip="Recovery Check"></i>`);
         h4html = h4html.replace(/(.+?) strike:/i, `<i class="fa-solid fa-dice-d20 fa-fw" data-tooltip="$1 Strike"></i>`);
         h4html = h4html.replace(/\(hit\)/i, ``);
         h4html = h4html.replace(/\(critical hit\)/i, `<i class="fa-solid fa-explosion fa-fw" data-tooltip="Critical Hit"></i>`);
