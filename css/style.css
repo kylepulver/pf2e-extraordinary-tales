@@ -507,3 +507,14 @@ button .cue {
     letter-spacing: -0.025em;
 
 }
+
+.tah-tags-wrapper .tags .tag:not(.tag_transparent), .dorako-ui .message-content .tags .tag:not(.tag_transparent), .dorako-ui .tags.paizo-style .tag:not(.tag_transparent), .dorako-ui .tags .tag:not(.tag_transparent) {
+    padding: 0.1em !important;
+    margin: 0.1em !important;
+    border: 0 !important;
+    outline: 0 !important;
+}
+
+.tags .tag, .tags .tag option {
+    height: auto !important;
+}
