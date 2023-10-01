@@ -646,10 +646,15 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
                 else {
                     actionhtml = actionhtml[0];
                 }
+                let actionresult = actionhtml.match(/\(.+?\)/i)?.[0] ?? "";
+                if (actionresult) {
+                    actionhtml = actionhtml.replace(actionresult, "");
+                    actionresult = ` ${actionresult}`;
+                }
                 actionhtml = actionhtml.replaceAll(/[a-z]/gi, (m) => {
                     return redactedchars[Math.floor(Math.random()*redactedchars.length)];
                 })
-                html.find('h4.action').html(`${prefixaction} <span data-tooltip="Unknown Ability">${actionhtml}</span>`)
+                html.find('h4.action').html(`${prefixaction} <span data-tooltip="Unknown Ability">${actionhtml}</span>${actionresult}`)
             }
         }
         html.find('.card-content').html("")
