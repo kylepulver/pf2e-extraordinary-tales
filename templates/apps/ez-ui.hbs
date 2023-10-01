@@ -184,7 +184,7 @@
         {{#unless @root.config.hideSections.attackList}}
                 {{#each this.system.actions}}
                     <div data-actor="{{../this.id}}" data-token="{{../this.token.id}}" data-act="{{@key}}">
-                        <span class="activity-icon">{{this.glyph}}</span>
+                        <span class="action-glyph">{{this.glyph}}</span>
                         <span style="letter-spacing:-0.05em">{{this.label}}</span>
                     </div>
                 {{/each}}

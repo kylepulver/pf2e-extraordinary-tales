@@ -250,7 +250,7 @@ Hooks.on('getChatLogPF2eEntryContext', (obj, items) => {
             const message = game.messages.get(li.data("messageId"));
 
             new Dialog({
-                title: `Disclose Details`,
+                title: `Reveal as Public Roll`,
                 content: `<p>Reveal this secret roll?</p>`,
                 render: html => {},
                 buttons: {
@@ -275,6 +275,40 @@ Hooks.on('getChatLogPF2eEntryContext', (obj, items) => {
             
         }
     },{
+        name: "Disclose Name",
+        icon: "<i class=\"fa-solid fa-clipboard\"></i>",
+        condition: li => {
+            return game.user.isGM;
+        },
+        callback: li => {
+            if (!game.user.isGM) return;
+            const message = game.messages.get(li.data("messageId"));
+
+            new Dialog({
+                title: `Disclose Name`,
+                content: `<p>Disclose the name of this ability?</p>`,
+                render: html => {},
+                buttons: {
+                    button1: {
+                        label: "Disclose",
+                        callback: async () => {
+                            await message.setFlag("pf2e-extraordinary-tales", "revealedname", true)
+                        },
+                        icon: `<i class="fas fa-check"></i>`
+                        },
+                    button2: {
+                        label: "Hide",
+                        callback: async () => {
+                            await message.setFlag("pf2e-extraordinary-tales", "revealedname", false)
+                        },
+                        icon: `<i class="fas fa-times"></i>`
+                    }
+                }
+            }).render(true);
+
+        }
+    },
+    {
         name: "Disclose Details",
         icon: "<i class=\"fa-solid fa-clipboard\"></i>",
         condition: li => {
@@ -527,14 +561,39 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
     // usually with like, "actually private rolls" or whatever
     html.find('.flavor-text').html(await TextEditor.enrichHTML(obj.flavor, {async: true}));
 
+    let h4html = html.find('h4.action').html();
+    h4html = h4html.replace(/damage roll:/i, `<i class="fa-solid fa-heart-crack fa-fw" data-tooltip="Damage Roll"></i>`);
+    h4html = h4html.replace(/skill check:/i, `<i class="fa-solid fa-circle-check fa-fw" data-tooltip="Skill Check"></i>`);
+    h4html = h4html.replace(/(.+?) strike:/i, `<i class="fa-solid fa-dice-d20 fa-fw" data-tooltip="$1 Strike"></i>`);
+    h4html = h4html.replace(/\(hit\)/i, ``);
+    h4html = h4html.replace(/\(critical hit\)/i, `<i class="fa-solid fa-explosion fa-fw" data-tooltip="Critical Hit"></i>`);
+    html.find('h4.action').html(h4html);
+
+    // let h4html = html.find('h4.action').html();
+    let targethtml = html.find('.target-dc').html();
+    targethtml = targethtml.replace(/target:/i, `<i class="fa-solid fa-crosshairs fa-fw" data-tooltip="Targeting"></i>`)
+    html.find('.target-dc').html(targethtml);
+
+    let resulthtml = html.find('.result').html();
+    resulthtml = resulthtml.replace(/result:/i, `<i class="fa-solid fa-arrow-right fa-fw" data-tooltip="Result"></i>`);
+    html.find('.result').html(resulthtml);
+
+
     let revealState = obj.getFlag("pf2e-extraordinary-tales", "revealed") ?? false;
+    let revealName = obj.getFlag("pf2e-extraordinary-tales", "revealedname") ?? false;
+
+  
+    if (!html.find('.card-content').length) {
+        // messages that are not chat info cards are never unrevealed
+        // if (!html.find('.damage-application').length) {
+        if (!html.find('h4.action').length) {
+            // unless they are damage rolls that have titles in them
+            revealState = true;
+        }
+    }
 
     if (!obj.user.isGM) {
         // messages not created by GM are never unrevealed
-        revealState = true;
-    }
-    if (!html.find('.card-content').length) {
-        // messages that are not chat info cards are never unrevealed
         revealState = true;
     }
     
@@ -569,11 +628,13 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
 
     }
     else {
-        html.find('.card-header h3').first().html("Ability")
+        if (!revealName) {
+            html.find('.card-header h3').first().html("Ability")
+            html.find('h4.action').remove();
+        }
         html.find('.card-content').html("")
         html.find('.card-footer').html("");
         html.find('.card-header img').remove();
-        html.find('.card-header h4').remove();
         
     }
 
@@ -583,16 +644,23 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
 
     if (game.user.isGM) {
         if (!revealState) {
-            html.append(`<div style="background:#0002;padding:0.25em;margin:0.25em;text-align:center;font-weight:bold;text-transform:uppercase">Content hidden</div>`);
             let revealedto = obj.getFlag("pf2e-extraordinary-tales", "revealedto") ?? [];
-            for(let u of revealedto) {
-                let user = game.users.get(u);
-                html.append(`<div style="background:#0002;padding:0.25em;margin:0.25em;text-align:center;text-transform:uppercase;font-size:80%">Revealed to ${user.character.name}</div>`);
-
-                // if (game.user.id == u) {
-
-                // }
+            if (!revealedto.length) {
+                html.find('.message-metadata').prepend(`<i class="fa-solid fa-eye-slash fa-fw" style="opacity:0.75" data-tooltip="Content Hidden"></i>`)
+        }
+            if (!revealName) {
+                html.find('.card-header h3').append(`<i class="fa-solid fa-eye-slash fa-fw" data-tooltip="Name Hidden" style="opacity:0.5"></i>`)
+                html.find('h4.action').append(`<i class="fa-solid fa-eye-slash" style="opacity:0.5"  data-tooltip="Name Hidden" ></i>`)
             }
+            if (revealedto.length) {
+                let userimgs = "";
+                for(let u of revealedto) {
+                    let user = game.users.get(u);
+                    userimgs += `<img src="${user.character.prototypeToken.texture.src}" style="max-height:1.25em;max-width:1.25em" data-tooltip="${user.character.name}"/>`;
+                }
+                html.append(`<div style="background:#0002;padding:0.1em;margin:0.1em;text-align:center;text-transform:uppercase;font-size:80%">Revealed to ${userimgs}</div>`);
+            }
+            
         }
     }
 
@@ -662,6 +730,8 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
             if (outcome == "cs") outcometext = "Critical Success";
             if (outcome == "f") outcometext = "Failure";
             if (outcome == "cf") outcometext = "Critical Failure";
+            if (outcometext) {
+
             html.append(`<div style="background:#0002;padding:0.25em;margin:0.25em;text-align:center;font-weight:bold;text-transform:uppercase"><span style="opacity:0.9">${outcometext}</span></div>`)
 
             html.css("position", "relative");
@@ -677,6 +747,8 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
             if (outcome == "cf") {
                 html.append(`<div style="mix-blend-mode:multiply;inset:0;background:#6106;box-shadow:inset 0 0 20px 5px #400, inset 0 0 5px 0 #800;z-index:5;position:absolute;pointer-events:none"></div>`)
             }
+        }
+
         }
     }
 
