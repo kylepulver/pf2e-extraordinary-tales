@@ -573,7 +573,16 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
         // if (!html.find('.damage-application').length) {
         if (!html.find('h4.action').length) {
             // unless they are damage rolls that have titles in them
-            revealState = true;
+                revealState = true;
+        }
+        else {
+            if ((html.find('h4.action').text().match(/saving throw/i) ?? false)) {
+                revealState = true;
+            }
+
+            if ((html.find('h4.action').text().match(/skill check:/i) ?? false)) {
+                revealState = true;
+            }
         }
     }
 
@@ -613,9 +622,31 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
 
     }
     else {
+        let redactedchars = "█▓▒▒░░░░"
         if (!revealName) {
-            html.find('.card-header h3').first().html("Ability")
-            html.find('h4.action').remove();
+            if (html.find('.card-header h3').length) {
+                let h3html = html.find('.card-header h3').first().text();
+                h3html = h3html.replaceAll(/[a-z]/gi, (m) => {
+                    return redactedchars[Math.floor(Math.random()*redactedchars.length)];
+                })
+                html.find('.card-header h3').first().html(`<span data-tooltip="Unknown Ability">${h3html}</span>`)
+            }
+            if (html.find('h4.action').length) {
+                let actionhtml = html.find('h4.action').text();
+                actionhtml = actionhtml.split(":");
+                let prefixaction = ""
+                if (actionhtml.length > 1) {
+                    prefixaction = actionhtml[0] + ": ";
+                    actionhtml = actionhtml[1];
+                }
+                else {
+                    actionhtml = actionhtml[0];
+                }
+                actionhtml = actionhtml.replaceAll(/[a-z]/gi, (m) => {
+                    return redactedchars[Math.floor(Math.random()*redactedchars.length)];
+                })
+                html.find('h4.action').html(`${prefixaction} <span data-tooltip="Unknown Ability">${actionhtml}</span>`)
+            }
         }
         html.find('.card-content').html("")
         html.find('.card-footer').html("");
@@ -627,6 +658,8 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
     // reveal for specific people, add a list of allowed user ids
     // 
 
+    //todo: redact text with unicode blocks
+    // ▓▒░ ░▒▓██ 
     if (game.user.isGM) {
         if (!revealState) {
             let revealedto = obj.getFlag("pf2e-extraordinary-tales", "revealedto") ?? [];
@@ -657,7 +690,7 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
         }
     }
 
-    if (game.user.isGM && !requestcheck) {
+    if (game.user.isGM && html.find('dice-roll').length) {
 
         let $content = html.find('.message-content');
         $content.append(`<div class="hover-reveal hover-gold" style="font-size:85%;line-height:1;padding:0.25em;position:absolute;top:-0.75em;right:0.25em;background:#333;color:#ddd;font-weight:bold;border-radius:3px">
