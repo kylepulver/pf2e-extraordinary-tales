@@ -260,11 +260,28 @@ span[data-pf2-action] {
     background: #fffc !important;
     padding: 0  !important;
     border: 0 !important;
-    outline: 0 !important;
+    /* outline: 0 !important; */
     line-height: inherit !important;
-    /* outline: 0.25em solid #0084; */
+    outline: 0.25em solid #0004 !important;
     color: #000 !important;
     border-radius: 0 !important;
+}
+a.content-link:hover, a.inline-roll:hover,
+span[data-pf2-effect-area]:hover,
+span[data-pf2-check]:hover,
+span[data-pf2-action]:hover {
+    color:#fff !important;
+    background: #000c !important;
+    outline: 0.25em solid #000c !important;
+}
+a.inline-check, span[data-pf2-check], span[data-pf2-effect-area].with-repost {
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+a.inline-check:hover, span[data-pf2-check]:hover, span[data-pf2-effect-area].with-repost:hover {
+    color:#fff !important;
+    background: #000c !important;
+    outline: 0.25em solid #000c !important;
 }
 i[data-pf2-repost] {
     /* background: #0001; */
@@ -517,4 +534,9 @@ button .cue {
 
 .tags .tag, .tags .tag option {
     height: auto !important;
+}
+
+.roll-note {
+    line-height: 1;
+    letter-spacing: -0.025em;
 }
