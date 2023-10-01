@@ -743,22 +743,28 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
         html.append(`<div style="inset:0;box-shadow: inset 0 0 12px 2px #8888, inset 0 0 2px 0 #888;z-index:10;position:absolute;pointer-events:none"></div>`)
     }
 
-    let h4html = html.find('h4.action').html();
-    h4html = h4html.replace(/damage roll:/i, `<i class="fa-solid fa-heart-crack fa-fw" data-tooltip="Damage Roll"></i>`);
-    h4html = h4html.replace(/skill check:/i, `<i class="fa-solid fa-dice-d20 fa-fw" data-tooltip="Skill Check"></i>`);
-    h4html = h4html.replace(/(.+?) strike:/i, `<i class="fa-solid fa-dice-d20 fa-fw" data-tooltip="$1 Strike"></i>`);
-    h4html = h4html.replace(/\(hit\)/i, ``);
-    h4html = h4html.replace(/\(critical hit\)/i, `<i class="fa-solid fa-explosion fa-fw" data-tooltip="Critical Hit"></i>`);
-    html.find('h4.action').html(h4html);
+    if (html.find('h4.action').length) {
+        let h4html = html.find('h4.action').html();
+        h4html = h4html.replace(/damage roll:/i, `<i class="fa-solid fa-heart-crack fa-fw" data-tooltip="Damage Roll"></i>`);
+        h4html = h4html.replace(/skill check:/i, `<i class="fa-solid fa-dice-d20 fa-fw" data-tooltip="Skill Check"></i>`);
+        h4html = h4html.replace(/(.+?) strike:/i, `<i class="fa-solid fa-dice-d20 fa-fw" data-tooltip="$1 Strike"></i>`);
+        h4html = h4html.replace(/\(hit\)/i, ``);
+        h4html = h4html.replace(/\(critical hit\)/i, `<i class="fa-solid fa-explosion fa-fw" data-tooltip="Critical Hit"></i>`);
+        html.find('h4.action').html(h4html);
+    }
 
     // let h4html = html.find('h4.action').html();
-    let targethtml = html.find('.target-dc').html();
-    targethtml = targethtml.replace(/target:/i, `<i class="fa-solid fa-crosshairs fa-fw" data-tooltip="Targeting"></i>`)
-    html.find('.target-dc').html(targethtml);
+    if (html.find('.target-dc').length) {
+        let targethtml = html.find('.target-dc').html();
+        targethtml = targethtml.replace(/target:/i, `<i class="fa-solid fa-crosshairs fa-fw" data-tooltip="Targeting"></i>`)
+        html.find('.target-dc').html(targethtml);
+        }
 
-    let resulthtml = html.find('.result').html();
-    resulthtml = resulthtml.replace(/result:/i, `<i class="fa-solid fa-arrow-right fa-fw" data-tooltip="Result"></i>`);
-    html.find('.result').html(resulthtml);
+    if (html.find('.result').length) {
+        let resulthtml = html.find('.result').html();
+        resulthtml = resulthtml.replace(/result:/i, `<i class="fa-solid fa-arrow-right fa-fw" data-tooltip="Result"></i>`);
+        html.find('.result').html(resulthtml);
+    }
     
     return;
 
