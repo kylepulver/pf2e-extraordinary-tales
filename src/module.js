@@ -699,7 +699,7 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
         }
     }
 
-    if (game.user.isGM && html.find('dice-roll').length) {
+    if (game.user.isGM) {
 
         let $content = html.find('.message-content');
         $content.append(`<div class="hover-reveal hover-gold" style="font-size:85%;line-height:1;padding:0.25em;position:absolute;top:-0.75em;right:0.25em;background:#333;color:#ddd;font-weight:bold;border-radius:3px">
