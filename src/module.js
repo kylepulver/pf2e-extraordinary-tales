@@ -559,14 +559,12 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
     // does anyone actually like that?
     // i feel like it's always the first thing that people remove
     // usually with like, "actually private rolls" or whatever
-    html.find('.flavor-text').html(await TextEditor.enrichHTML(obj.flavor, {async: true}));
-
-   
+    html.find('.flavor-text').html(await TextEditor.enrichHTML(obj.flavor, {async: true}));   
 
 
     let revealState = obj.getFlag("pf2e-extraordinary-tales", "revealed") ?? false;
     let revealName = obj.getFlag("pf2e-extraordinary-tales", "revealedname") ?? false;
-
+    let automaticallyRevealStrikeNames = game.settings.get("pf2e-extraordinary-tales", "automaticallyShowStrikeNames") ?? true;
   
     if (!html.find('.card-content').length) {
         // messages that are not chat info cards are never unrevealed
@@ -576,6 +574,20 @@ Hooks.on(`renderChatMessage`, async (obj, html, data) => {
                 revealState = true;
         }
         else {
+            if (automaticallyRevealStrikeNames) {
+                if ((html.find('h4.action').text().match(/melee strike/i) ?? false)) {                
+                    revealName = true;
+                }
+
+                if ((html.find('h4.action').text().match(/ranged strike/i) ?? false)) {                
+                    revealName = true;
+                }
+
+                if ((html.find('h4.action').text().match(/damage roll/i) ?? false)) {                
+                    revealName = true;
+                }
+            }
+
             if ((html.find('h4.action').text().match(/saving throw/i) ?? false)) {
                 revealState = true;
             }

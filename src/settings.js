@@ -23,4 +23,16 @@ Hooks.once("init", () => {
         type: Boolean,
         // onChange: rule => window.location.reload(),
     });
+
+    game.settings.register("pf2e-extraordinary-tales", "automaticallyShowStrikeNames", {
+        name: "Automatically Show Strike Names",
+        hint: "Automatically show Hidden Strike names from NPCs to Players",
+        icon: "fas fa-cog",
+        scope: "world",
+        config: true,
+        default: true,
+        type: Boolean,
+    });
+
 });
+
