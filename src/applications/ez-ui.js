@@ -1308,7 +1308,7 @@ h4
                 content += `<div style="text-align:center;padding:0.25em;cursor:pointer" data-clear><i class="fa-solid fa-times"></i> Clear</div>`
                 let pack = game.packs.get('pf2e.actionspf2e');
                 await pack.getDocuments();
-                let activities = pack.filter(i => i.system.traits.value.includes('exploration') && i.system.source.value == "Pathfinder Core Rulebook")
+                let activities = pack.filter(i => i.system.traits.value.includes('exploration') && i.system.publication.title == "Pathfinder Core Rulebook")
                 content += ``
                 for(let i of activities) {
                     content += `<div style="display:inline-block;width:50%;cursor:pointer"><span data-add="${i.id}"> &bull; ${i.name}</span> <i data-item="${i.id}" class="fa-solid fa-circle-info " style="opacity:0.5"></i></div>`
