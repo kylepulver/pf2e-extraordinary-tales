@@ -628,9 +628,11 @@ export default class ExtraTalesEzUi extends Application {
         
         let pack = game.packs.get('pf2e.actionspf2e');
         await pack.getDocuments();
-        let activities = pack.filter(i => i.system.traits.value.includes('exploration') && i.system.source.value == "Pathfinder Core Rulebook")
-
+        let activities = pack.filter(i => i.system.traits.value.includes('exploration') && i.system.publication.title == "Pathfinder Core Rulebook")
         data.activities = activities;
+
+        data.activities = [];
+
 
         data.actions = this._actions;
 
