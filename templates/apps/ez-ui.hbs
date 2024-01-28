@@ -227,7 +227,7 @@
         <span style="letter-spacing:-0.05em;font-size:85%">{{this.name}}</span>
         <div data-casting="{{this.id}}" data-actor="{{../this.id}}" data-token="{{../this.token.id}}"> <span style="letter-spacing:-0.05em">Spell Attack</span> {{this.statistic.check.mod}} <span style="letter-spacing:-0.05em">DC</span> {{this.statistic.dc.value}}</div>
         </div>
-        {{#each this.levels}}
+        {{#each this.groups}}
         {{#if this.active.length}}
         <div style="letter-spacing:-0.05em;font-size:85%">
             {{#if this.isCantrip}}
