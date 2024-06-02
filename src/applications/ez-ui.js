@@ -1056,8 +1056,16 @@ export default class ExtraTalesEzUi extends Application {
             let token = ev.currentTarget.dataset.token;
             let t = canvas.scene.tokens.get(token) ?? {};
             let a = t.actor ?? game.actors.get(actor)
+            let obj;
 
-            let obj = a.synthetics.toggles.find(i => i.itemId == toggle);
+            Object.values(a.synthetics.toggles).some(toggleType => {
+                Object.values(toggleType).some(toggleValue => {
+                    if (toggleValue.itemId == toggle) {
+                        obj=toggleValue;
+                        return true;
+                    }
+                });
+            });
             
             a.toggleRollOption(obj.domain, obj.option, obj.itemId, obj.checked ? false : true)
 
