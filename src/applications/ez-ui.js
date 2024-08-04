@@ -746,7 +746,7 @@ export default class ExtraTalesEzUi extends Application {
             },
             functionReady: async(instance, helper) => {
                 $(helper.tooltip).on('click', '[data-cast]', (ev) => {
-                    instance.obj.spellcasting.cast(instance.obj, {slot: helper.origin.dataset.slotId, level: helper.origin.dataset.slotLevel});
+                    instance.obj.spellcasting.cast(instance.obj, {slotIndex: helper.origin.dataset.slotId, rank: Number(helper.origin.dataset.slotLevel)});
                 });
                 $(helper.tooltip).on('click', '[data-chat]', async (ev) => {
                     await instance.obj.toMessage(undefined)
